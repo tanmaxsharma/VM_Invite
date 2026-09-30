@@ -50,7 +50,7 @@ export default function StyleguidePage() {
       <section className="space-y-stack">
         <p className="type-meta text-gold-700">Typography</p>
         <p className="type-display text-maroon-700">Shubh Vivah</p>
-        <p className="type-names text-maroon-500">Vishesh &amp; Mehak</p>
+        <p className="type-names text-maroon-500">Vishesh &amp; Mahak</p>
         <h2 className="type-heading">The Celebrations</h2>
         <p className="type-subheading text-ink-soft">Two families, one beginning</p>
         <p className="type-body max-w-prose text-ink-soft">

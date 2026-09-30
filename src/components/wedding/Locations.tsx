@@ -7,6 +7,7 @@ import { ease } from "@/lib/motion";
 import { Mask } from "@/components/ui/Mask";
 import { OrnateLink } from "@/components/ui/OrnateLink";
 import { Mandala } from "@/components/decorations/Mandala";
+import { CornerOrnament } from "@/components/decorations/CornerOrnament";
 import { OrnamentDivider } from "@/components/decorations/OrnamentDivider";
 
 export type LocationEntry = Place & {
@@ -22,8 +23,9 @@ type LocationsProps = {
 };
 
 const NUMERALS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"];
+const corner = "pointer-events-none absolute z-10 w-10 text-gold-500 md:w-14";
 
-/** Where the celebrations happen — a short, printed-insert style list. */
+/** Where the celebrations happen — the map as an inset plate, then a short index of places. */
 export function Locations({ heading, intro, places, map }: LocationsProps) {
   const root = useRef<HTMLElement>(null);
 
@@ -35,16 +37,6 @@ export function Locations({ heading, intro, places, map }: LocationsProps) {
       .from("[data-l=heading]", { yPercent: 105, duration: 1.6 }, 0)
       .from("[data-l=intro]", { autoAlpha: 0, y: 12, duration: 1.4, stagger: 0.15 }, 0.3);
 
-    gsap.utils.toArray<HTMLElement>("[data-l=place]").forEach((place) => {
-      const q = gsap.utils.selector(place);
-      gsap
-        .timeline({ defaults: { ease: ease.cinematicGsap }, scrollTrigger: { trigger: place, start: "top 82%" } })
-        .fromTo(q("[data-l=rule]"), { scaleX: 0 }, { scaleX: 1, duration: 1.4, ease: ease.gentleGsap }, 0)
-        .from(q("[data-l=numeral]"), { autoAlpha: 0, duration: 1.2 }, 0.2)
-        .from(q("[data-l=name]"), { yPercent: 105, duration: 1.4 }, 0.25)
-        .from(q("[data-l=detail]"), { autoAlpha: 0, y: 8, duration: 1.2, stagger: 0.1 }, 0.5);
-    });
-
     gsap
       .timeline({ defaults: { ease: ease.cinematicGsap }, scrollTrigger: { trigger: "[data-l=map]", start: "top 80%" } })
       .from("[data-l=map-label]", { autoAlpha: 0, y: 10, duration: 1.2, stagger: 0.12 }, 0)
@@ -55,6 +47,16 @@ export function Locations({ heading, intro, places, map }: LocationsProps) {
         0.15,
       )
       .from("[data-l=map-cta]", { autoAlpha: 0, y: 10, duration: 1.2 }, 1.1);
+
+    gsap.utils.toArray<HTMLElement>("[data-l=place]").forEach((place) => {
+      const q = gsap.utils.selector(place);
+      gsap
+        .timeline({ defaults: { ease: ease.cinematicGsap }, scrollTrigger: { trigger: place, start: "top 85%" } })
+        .fromTo(q("[data-l=rule]"), { scaleX: 0 }, { scaleX: 1, duration: 1.4, ease: ease.gentleGsap }, 0)
+        .from(q("[data-l=numeral]"), { autoAlpha: 0, duration: 1.2 }, 0.2)
+        .from(q("[data-l=name]"), { yPercent: 105, duration: 1.4 }, 0.25)
+        .from(q("[data-l=detail]"), { autoAlpha: 0, y: 8, duration: 1.2 }, 0.5);
+    });
   }, root);
 
   return (
@@ -90,9 +92,62 @@ export function Locations({ heading, intro, places, map }: LocationsProps) {
         </div>
       </header>
 
-      <ul className="relative mx-auto mt-12 grid max-w-[52rem] md:mt-16 md:grid-cols-2 md:gap-x-16">
+      {map.embedUrl && (
+        <div data-l="map" className="relative mx-auto mt-12 max-w-[56rem] md:mt-16">
+          <div className="mb-6 text-center md:mb-8">
+            <p data-l="map-label" className="type-meta text-gold-700">
+              The Venue
+            </p>
+            <p data-l="map-label" className="type-heading mt-2 text-maroon-500">
+              {map.name}
+            </p>
+            {map.address && (
+              <p data-l="map-label" className="type-body mt-2 text-ink-soft">
+                {map.address}
+              </p>
+            )}
+          </div>
+
+          {/* the map, mounted like an inset plate: paper border, gold hairlines, corner ornaments */}
+          <div
+            data-l="map-frame"
+            className="paper relative rounded-[1.5rem] border border-gold-500/55 p-2.5 shadow-card md:p-3.5"
+          >
+            <CornerOrnament corner="top-left" className={`${corner} -top-1 -left-1`} />
+            <CornerOrnament corner="top-right" className={`${corner} -top-1 -right-1`} />
+            <CornerOrnament corner="bottom-left" className={`${corner} -bottom-1 -left-1`} />
+            <CornerOrnament corner="bottom-right" className={`${corner} -right-1 -bottom-1`} />
+            <div className="relative aspect-[4/5] min-h-72 overflow-hidden rounded-[1.1rem] border border-gold-500/30 bg-parchment-100 sm:aspect-[4/3] md:aspect-[16/10] lg:aspect-[16/9]">
+              <iframe
+                src={map.embedUrl}
+                title={`${map.name} location`}
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+                className="absolute inset-0 size-full border-0 [filter:sepia(0.12)_saturate(0.9)]"
+              />
+            </div>
+          </div>
+
+          {map.directionsUrl && (
+            <div data-l="map-cta" className="mt-8 text-center">
+              <OrnateLink
+                href={map.directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Get directions to ${map.name} (opens in a new tab)`}
+              >
+                Get Directions
+              </OrnateLink>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* a short index of every place in the schedule */}
+      <ul className="relative mx-auto mt-14 grid max-w-[52rem] sm:grid-cols-2 sm:gap-x-12 md:mt-20 md:gap-x-16">
         {places.map((place, i) => (
-          <li key={place.name} data-l="place" className="relative flex gap-5 py-8 md:py-10">
+          <li key={place.name} data-l="place" className="relative flex gap-4 py-6 md:py-8">
             <span data-l="rule" aria-hidden className="absolute top-0 left-0 h-px w-full origin-left bg-line" />
             <span data-l="numeral" aria-hidden className="type-subheading w-7 shrink-0 italic text-gold-500">
               {NUMERALS[i] ?? i + 1}
@@ -100,24 +155,24 @@ export function Locations({ heading, intro, places, map }: LocationsProps) {
             <div className="min-w-0">
               <h3 className="text-maroon-500">
                 <Mask className="-ml-[0.12em]">
-                  <span data-l="name" className="type-heading block leading-[1.1]!">
+                  <span data-l="name" className="type-subheading block not-italic!">
                     {place.name}
                   </span>
                 </Mask>
               </h3>
               {place.occasions.length > 0 && (
-                <ul data-l="detail" className="mt-3 space-y-1">
+                <p data-l="detail" className="type-body mt-1.5 text-ink-soft">
                   {place.occasions.map((occasion) => (
-                    <li key={`${occasion.title}-${occasion.date}`} className="type-body text-ink-soft">
+                    <span key={`${occasion.title}-${occasion.date}`} className="block">
                       <span className="text-maroon-700">{occasion.title}</span>
                       <span className="mx-2 text-gold-500">·</span>
                       {occasion.date}
-                    </li>
+                    </span>
                   ))}
-                </ul>
+                </p>
               )}
               {place.address && (
-                <p data-l="detail" className="type-body mt-3 text-ink-soft">
+                <p data-l="detail" className="type-body mt-2 text-ink-soft">
                   {place.address}
                 </p>
               )}
@@ -127,7 +182,8 @@ export function Locations({ heading, intro, places, map }: LocationsProps) {
                   href={place.mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="type-button mt-5 flex w-fit items-center gap-2 border-b border-gold-500/60 pb-1 text-maroon-500 transition-colors hover:border-maroon-500"
+                  aria-label={`Get directions to ${place.name} (opens in a new tab)`}
+                  className="type-button mt-4 flex w-fit items-center gap-2 border-b border-gold-500/60 pb-1 text-maroon-500 transition-colors hover:border-maroon-500"
                 >
                   Get Directions
                   <span aria-hidden>→</span>
@@ -137,58 +193,6 @@ export function Locations({ heading, intro, places, map }: LocationsProps) {
           </li>
         ))}
       </ul>
-
-      {/* one map — the primary venue — framed like an inset card */}
-      <div data-l="map" className="relative mx-auto mt-14 max-w-[52rem] md:mt-20">
-        {(map.name || map.address) && (
-          <div className="mb-6 text-center">
-            {map.name && (
-              <p data-l="map-label" className="type-meta text-gold-700">
-                {map.name}
-              </p>
-            )}
-            {map.address && (
-              <p data-l="map-label" className="type-body mt-2 text-ink-soft">
-                {map.address}
-              </p>
-            )}
-          </div>
-        )}
-
-        <div data-l="map-frame" className="paper rounded-[1.5rem] border border-gold-500/50 p-2 shadow-card md:p-3">
-          <div className="relative aspect-square overflow-hidden rounded-[1.1rem] border border-gold-500/25 bg-parchment-100 sm:aspect-[4/3] md:aspect-[16/9]">
-            {map.embedUrl ? (
-              <iframe
-                src={map.embedUrl}
-                title={`Map showing ${map.name || "the celebration venue"}`}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                allowFullScreen
-                className="absolute inset-0 size-full border-0 [filter:sepia(0.12)_saturate(0.9)]"
-              />
-            ) : (
-              <div className="absolute inset-0 flex flex-col items-center justify-center px-8 text-center">
-                <Mandala aria-hidden className="w-16 text-gold-500 opacity-60 md:w-20" />
-                <p className="type-subheading mt-6 max-w-[18rem] italic text-ink-soft">{map.pendingMessage}</p>
-                <OrnamentDivider className="mt-6 w-28 text-gold-500" />
-              </div>
-            )}
-          </div>
-        </div>
-
-        {map.directionsUrl && (
-          <div data-l="map-cta" className="mt-8 text-center">
-            <OrnateLink
-              href={map.directionsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Get directions to ${map.name || "the venue"} (opens in a new tab)`}
-            >
-              Get Directions
-            </OrnateLink>
-          </div>
-        )}
-      </div>
     </section>
   );
 }

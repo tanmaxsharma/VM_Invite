@@ -102,15 +102,29 @@
   }
 }
 
-/* Petals: each element sets --petal-duration / --petal-delay / --petal-drift. */
+/* Ambient layer (see AmbientWeddingEffects). Each petal sets --petal-drift.
+   Transform/opacity only, so everything stays on the compositor. */
 @keyframes petal-fall {
   from { transform: translate3d(0, -8vh, 0) rotate(0deg); }
-  to { transform: translate3d(var(--petal-drift, 0), 108vh, 0) rotate(300deg); }
+  to { transform: translate3d(var(--petal-drift, 0), 108vh, 0) rotate(260deg); }
 }
 
-@keyframes petal-sway {
-  0%, 100% { transform: translateX(-10px) rotate(-12deg); }
-  50% { transform: translateX(10px) rotate(12deg); }
+/* sway + tilt + a turn of the petal (scaleX) so it seems to tumble in the air */
+@keyframes petal-flutter {
+  0%, 100% { transform: translateX(-14px) rotate(-16deg) scaleX(1); }
+  25% { transform: translateX(-2px) rotate(-2deg) scaleX(0.45); }
+  50% { transform: translateX(14px) rotate(14deg) scaleX(1); }
+  75% { transform: translateX(2px) rotate(2deg) scaleX(0.6); }
+}
+
+@keyframes wing-flap {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(0.28); }
+}
+
+@keyframes ambient-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 :root {

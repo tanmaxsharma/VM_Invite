@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useLenis } from "lenis/react";
 import { useBackgroundMusic } from "@/lib/useBackgroundMusic";
 import { MusicControl } from "@/components/ui/MusicControl";
+import { AmbientWeddingEffects } from "@/components/decorations/AmbientWeddingEffects";
 import { OpeningScene } from "./OpeningScene";
 import { Hero } from "./Hero";
 
@@ -41,6 +42,8 @@ export function InvitationExperience({ names, shortNames, place, musicSrc }: Inv
 
   return (
     <>
+      {/* Page-wide atmosphere, only once the invitation is open. Rendered first so all content paints above it. */}
+      {stage === "open" && <AmbientWeddingEffects />}
       <Hero names={names} place={place} play={stage !== "sealed"} inert={stage === "sealed"} />
       {stage !== "open" && (
         <OpeningScene

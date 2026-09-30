@@ -7,7 +7,6 @@ import { Mandala } from "@/components/decorations/Mandala";
 import { CornerOrnament } from "@/components/decorations/CornerOrnament";
 import { OrnamentDivider } from "@/components/decorations/OrnamentDivider";
 import { FloralSprig } from "@/components/decorations/FloralSprig";
-import { Petals } from "@/components/decorations/Petals";
 import { Mask } from "@/components/ui/Mask";
 
 export type HeroProps = {
@@ -94,8 +93,6 @@ export function Hero({ names: [first, second], place, play, inert }: HeroProps) 
       <div data-h="sprig" aria-hidden className="pointer-events-none absolute right-[2%] -bottom-4 md:right-[6%]">
         <FloralSprig data-h="decor" className="h-28 rotate-12 -scale-x-100 text-brown-300 md:h-56 lg:h-72" />
       </div>
-
-      {play && <Petals />}
 
       <div data-h="content" className="relative flex flex-col items-center text-center">
         <p data-h="families" className="type-meta max-w-[15em] text-gold-700 sm:max-w-none">

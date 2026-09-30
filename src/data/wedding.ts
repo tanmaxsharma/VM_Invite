@@ -1,7 +1,7 @@
 import type { WeddingData } from "./types";
 
 export const wedding = {
-  bride: { firstName: "Mehak", lastName: "Jain" },
+  bride: { firstName: "Mahak", lastName: "Jain" },
   groom: { firstName: "Vishesh", lastName: "Jain" },
   nameOrder: "groom-first",
   weddingDate: "2026-11-15",
@@ -65,21 +65,19 @@ export const wedding = {
       { name: "Gyan Ganga College Ground" },
       { name: "Farmhouse" },
     ],
-    // The single map shown under the places. Fill these in once the real venue
-    // is confirmed — until then an invitation-style placeholder is shown.
+    // The map shown in this section.
     //   embedUrl:      Google Maps → Share → "Embed a map" → the iframe's src
-    //   directionsUrl: Google Maps → Share → "Copy link"
+    //   directionsUrl: Google Maps → Share → "Copy link" (the button only shows once set)
     map: {
-      name: "",
-      address: "",
-      embedUrl: "",
+      name: "Gyan Ganga College Ground",
+      embedUrl:
+        "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3669.168937125594!2d79.87290677491534!3d23.12749947910037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3981b23559386f89%3A0xf81383f511230a67!2sGyan%20Ganga%20College%20Ground!5e0!3m2!1sen!2sin!4v1790755811690!5m2!1sen!2sin",
       directionsUrl: "",
-      pendingMessage: "Venue details and directions will be shared soon.",
     },
   },
   closing: {
     heading: "With Love",
-    hashtag: "#VisheshlovesMehak",
+    hashtag: "#MahVieEnRose",
     // TEMPORARY: public/images/couple-placeholder.jpg is a stock photo by
     // "shades by 43" (Unsplash License). Replace it with the couple's own
     // photograph (portrait, ideally 4:5), then update `alt` and `focus`.
@@ -90,7 +88,7 @@ export const wedding = {
     },
   },
   meta: {
-    title: "Vishesh & Mehak — Wedding Invitation",
-    description: "You are warmly invited to celebrate the wedding of Vishesh & Mehak.",
+    title: "Vishesh & Mahak — Wedding Invitation",
+    description: "Together with their families, Vishesh & Mahak warmly invite you to celebrate their wedding.",
   },
 } satisfies WeddingData;

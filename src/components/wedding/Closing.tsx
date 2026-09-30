@@ -8,7 +8,6 @@ import { ease } from "@/lib/motion";
 import { Mask } from "@/components/ui/Mask";
 import { Mandala } from "@/components/decorations/Mandala";
 import { OrnamentDivider } from "@/components/decorations/OrnamentDivider";
-import { Petals } from "@/components/decorations/Petals";
 
 type ClosingProps = {
   heading: string;
@@ -58,8 +57,6 @@ export function Closing({ heading, names: [first, second], date, hashtag, photo 
       >
         <Mandala className="w-full animate-spin-slow" />
       </div>
-
-      <Petals />
 
       <div className="relative flex flex-col items-center text-center">
         <p id="closing-heading" data-c="heading" className="type-meta text-gold-700">

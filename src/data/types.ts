@@ -36,15 +36,14 @@ export type Place = {
 };
 
 export type MapLocation = {
-  /** e.g. the main venue's name; leave empty until confirmed */
+  /** Venue shown above the map, e.g. "Gyan Ganga College Ground" */
   name: string;
-  address: string;
-  /** Google Maps "Embed a map" src (https://www.google.com/maps/embed?pb=…). Empty → an elegant placeholder is shown. */
+  /** Optional line under the name */
+  address?: string;
+  /** Google Maps "Embed a map" src (https://www.google.com/maps/embed?pb=…). Empty → no map is shown. */
   embedUrl: string;
   /** Google Maps share link. Empty → no "Get directions" button. */
-  directionsUrl: string;
-  /** Shown in place of the map while embedUrl is empty */
-  pendingMessage: string;
+  directionsUrl?: string;
 };
 
 export type Photo = {
