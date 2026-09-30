@@ -1,0 +1,270 @@
+@import "tailwindcss";
+@import "lenis/dist/lenis.css";
+
+/* ==========================================================================
+   Design tokens — the single source of truth for the template's look.
+   Every token below also generates Tailwind utilities
+   (e.g. --color-maroon-500 → bg-maroon-500, --spacing-section → py-section).
+   Re-skin a template by changing values here, not in components.
+   `static` always emits every token as a CSS variable, so GSAP and inline
+   styles can read them even when no utility class uses them.
+   ========================================================================== */
+@theme static {
+  /* --- Palette ---------------------------------------------------------- */
+  --color-parchment-50: #fbf7ee;
+  --color-parchment-100: #f5ecdb;
+  --color-parchment-200: #eadcc0;
+  --color-parchment-300: #d9c49c;
+
+  --color-gold-300: #d8c08a;
+  --color-gold-500: #b08d45;
+  --color-gold-700: #7f642c;
+
+  --color-saffron-300: #eab47a;
+  --color-saffron-500: #d4812f;
+  --color-saffron-700: #a85d18;
+
+  --color-maroon-300: #b9727a;
+  --color-maroon-500: #83323f;
+  --color-maroon-700: #5e1d28;
+
+  --color-brown-300: #a88a70;
+  --color-brown-500: #6f5140;
+  --color-brown-700: #4a3427;
+  --color-brown-900: #2e2019;
+
+  /* Semantic aliases — prefer these in components */
+  --color-canvas: var(--color-parchment-50);
+  --color-surface: var(--color-parchment-100);
+  --color-ink: var(--color-brown-900);
+  --color-ink-soft: var(--color-brown-500);
+  --color-accent: var(--color-maroon-500);
+  --color-line: color-mix(in oklab, var(--color-gold-500) 45%, transparent);
+
+  /* --- Typography ------------------------------------------------------- */
+  --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
+  --font-sans: var(--font-jost), "Jost", system-ui, sans-serif;
+
+  /* Fluid scale: 360px → 1440px viewports */
+  --text-display: clamp(3.25rem, 2.1rem + 5.2vw, 7.5rem);
+  --text-display--line-height: 0.95;
+  --text-names: clamp(3.25rem, 2.2rem + 4.6vw, 6.5rem);
+  --text-names--line-height: 1;
+  --text-heading: clamp(2rem, 1.55rem + 2vw, 3.5rem);
+  --text-heading--line-height: 1.1;
+  --text-subheading: clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);
+  --text-subheading--line-height: 1.35;
+  --text-body: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);
+  --text-body--line-height: 1.75;
+  --text-meta: 0.75rem;
+  --text-meta--line-height: 1.5;
+  --text-button: 0.8125rem;
+  --text-button--line-height: 1;
+
+  --tracking-meta: 0.28em;
+  --tracking-button: 0.2em;
+
+  /* --- Spacing & layout ------------------------------------------------- */
+  --spacing-gutter: clamp(1rem, 0.5rem + 2.5vw, 3rem);
+  --spacing-section: clamp(5rem, 3.5rem + 7vw, 10rem);
+  --spacing-stack: clamp(1.5rem, 1.2rem + 1.2vw, 2.5rem);
+  --container-prose: 38rem;
+  --container-content: 72rem;
+
+  /* --- Radii ------------------------------------------------------------ */
+  --radius-card: 0.375rem;
+  --radius-pill: 999px;
+  /* Jharokha-style arch for frames and image masks */
+  --radius-arch: 999px 999px 0.375rem 0.375rem;
+
+  /* --- Shadows (warm-tinted, never grey) -------------------------------- */
+  --shadow-soft: 0 8px 30px -12px rgb(46 32 25 / 0.18);
+  --shadow-card: 0 24px 60px -28px rgb(46 32 25 / 0.3), 0 2px 6px -2px rgb(46 32 25 / 0.08);
+  --shadow-gold: 0 12px 40px -14px rgb(176 141 69 / 0.45);
+
+  /* --- Motion (mirrored in src/lib/motion.ts) --------------------------- */
+  --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-gentle: cubic-bezier(0.4, 0, 0.2, 1);
+  --animate-spin-slow: spin 120s linear infinite;
+  --animate-scroll-cue: scroll-cue 2.8s var(--ease-gentle) infinite;
+
+  --animate-music-bar: music-bar 0.9s var(--ease-gentle) infinite alternate;
+
+  @keyframes music-bar {
+    from { transform: scaleY(0.25); }
+    to { transform: scaleY(1); }
+  }
+
+  @keyframes scroll-cue {
+    0% { transform: translateY(-100%); opacity: 0; }
+    30% { opacity: 1; }
+    100% { transform: translateY(260%); opacity: 0; }
+  }
+}
+
+/* Petals: each element sets --petal-duration / --petal-delay / --petal-drift. */
+@keyframes petal-fall {
+  from { transform: translate3d(0, -8vh, 0) rotate(0deg); }
+  to { transform: translate3d(var(--petal-drift, 0), 108vh, 0) rotate(300deg); }
+}
+
+@keyframes petal-sway {
+  0%, 100% { transform: translateX(-10px) rotate(-12deg); }
+  50% { transform: translateX(10px) rotate(12deg); }
+}
+
+:root {
+  color-scheme: light;
+
+  /* Fine paper grain: SVG noise tinted warm brown, tiled. */
+  --texture-paper: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .43 0 0 0 0 .32 0 0 0 0 .25 0 0 0 .22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+@layer base {
+  html {
+    background-color: var(--color-canvas);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-kerning: normal;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    position: relative;
+    isolation: isolate;
+    overflow-x: clip;
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    font-weight: 300;
+  }
+
+  /* Parchment: soft warm light at the top, gentle edge vignette, paper grain. */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      var(--texture-paper),
+      radial-gradient(120% 70% at 50% 0%, rgb(255 253 247 / 0.9), transparent 70%),
+      radial-gradient(140% 100% at 50% 50%, transparent 55%, rgb(217 196 156 / 0.35) 100%);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background-color: var(--color-maroon-500);
+    color: var(--color-parchment-50);
+  }
+
+  :focus-visible {
+    outline: 1.5px solid var(--color-gold-500);
+    outline-offset: 3px;
+  }
+
+  img, svg, video {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   Typography roles — use these instead of ad-hoc font classes.
+   ========================================================================== */
+@utility type-display {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  line-height: var(--text-display--line-height);
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+
+@utility type-names {
+  font-family: var(--font-display);
+  font-size: var(--text-names);
+  line-height: var(--text-names--line-height);
+  font-style: italic;
+  font-weight: 400;
+}
+
+@utility type-heading {
+  font-family: var(--font-display);
+  font-size: var(--text-heading);
+  line-height: var(--text-heading--line-height);
+  font-weight: 400;
+}
+
+@utility type-subheading {
+  font-family: var(--font-display);
+  font-size: var(--text-subheading);
+  line-height: var(--text-subheading--line-height);
+  font-style: italic;
+  font-weight: 400;
+}
+
+@utility type-body {
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: 300;
+}
+
+@utility type-meta {
+  font-family: var(--font-sans);
+  font-size: var(--text-meta);
+  line-height: var(--text-meta--line-height);
+  font-weight: 500;
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+}
+
+@utility type-button {
+  font-family: var(--font-sans);
+  font-size: var(--text-button);
+  line-height: var(--text-button--line-height);
+  font-weight: 500;
+  letter-spacing: var(--tracking-button);
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   Surfaces
+   ========================================================================== */
+/* Paper card surface */
+@utility paper {
+  background-color: var(--color-surface);
+  background-image: var(--texture-paper);
+}
+
+/* Double hairline gold frame, as on printed invitations */
+@utility frame {
+  border: 1px solid var(--color-line);
+  outline: 1px solid color-mix(in oklab, var(--color-gold-500) 25%, transparent);
+  outline-offset: -7px;
+}
