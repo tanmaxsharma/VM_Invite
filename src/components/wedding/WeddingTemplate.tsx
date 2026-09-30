@@ -62,8 +62,9 @@ export function WeddingTemplate({ data }: { data: WeddingData }) {
       <Closing
         heading={data.closing.heading}
         names={firstNames}
-        date={ordinalDate(weddingDate, timeZone)}
-        hashtag={data.hashtag}
+        date={data.closing.date ?? ordinalDate(weddingDate, timeZone)}
+        hashtag={data.closing.hashtag}
+        photo={data.closing.photo}
       />
     </main>
   );

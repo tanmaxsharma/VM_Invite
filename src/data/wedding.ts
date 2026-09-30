@@ -7,9 +7,9 @@ export const wedding = {
   weddingDate: "2026-11-15",
   timeZone: "Asia/Kolkata",
   // city: "…", — add the city to show it under the couple's names
-  hashtag: "#VisheshlovesMehak",
-  // Add the licensed track at public/audio/wedding.mp3. If it is missing,
-  // the music control simply stays hidden.
+  // TEMPORARY: public/audio/wedding.mp3 is "Wedding Piano" by PaulYudin
+  // (Pixabay Content License). Replace the file to change the music; if it is
+  // ever missing, the music control simply stays hidden.
   music: { src: "/audio/wedding.mp3" },
   invitation: {
     invocation: "Shri Ganeshaya Namah",
@@ -65,9 +65,29 @@ export const wedding = {
       { name: "Gyan Ganga College Ground" },
       { name: "Farmhouse" },
     ],
+    // The single map shown under the places. Fill these in once the real venue
+    // is confirmed — until then an invitation-style placeholder is shown.
+    //   embedUrl:      Google Maps → Share → "Embed a map" → the iframe's src
+    //   directionsUrl: Google Maps → Share → "Copy link"
+    map: {
+      name: "",
+      address: "",
+      embedUrl: "",
+      directionsUrl: "",
+      pendingMessage: "Venue details and directions will be shared soon.",
+    },
   },
   closing: {
     heading: "With Love",
+    hashtag: "#VisheshlovesMehak",
+    // TEMPORARY: public/images/couple-placeholder.jpg is a stock photo by
+    // "shades by 43" (Unsplash License). Replace it with the couple's own
+    // photograph (portrait, ideally 4:5), then update `alt` and `focus`.
+    photo: {
+      src: "/images/couple-placeholder.jpg",
+      alt: "A bride and groom in wedding attire beneath a canopy of flowers (placeholder photograph)",
+      focus: "50% 30%",
+    },
   },
   meta: {
     title: "Vishesh & Mehak — Wedding Invitation",

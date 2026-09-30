@@ -1,11 +1,13 @@
 "use client";
 
 import { useRef } from "react";
+import Image from "next/image";
+import type { Photo } from "@/data/types";
 import { gsap, prefersReducedMotion, useGsap } from "@/lib/gsap";
 import { ease } from "@/lib/motion";
 import { Mask } from "@/components/ui/Mask";
 import { Mandala } from "@/components/decorations/Mandala";
-import { Bouquet } from "@/components/decorations/Bouquet";
+import { OrnamentDivider } from "@/components/decorations/OrnamentDivider";
 import { Petals } from "@/components/decorations/Petals";
 
 type ClosingProps = {
@@ -15,28 +17,32 @@ type ClosingProps = {
   /** e.g. "15th November 2026" */
   date: string;
   hashtag: string;
+  photo: Photo;
 };
 
 /** The last page of the invitation. */
-export function Closing({ heading, names: [first, second], date, hashtag }: ClosingProps) {
+export function Closing({ heading, names: [first, second], date, hashtag, photo }: ClosingProps) {
   const root = useRef<HTMLElement>(null);
 
   useGsap(() => {
     if (prefersReducedMotion()) return;
     gsap
-      .timeline({ defaults: { ease: ease.cinematicGsap }, scrollTrigger: { trigger: root.current, start: "top 55%" } })
+      .timeline({ defaults: { ease: ease.cinematicGsap }, scrollTrigger: { trigger: root.current, start: "top 60%" } })
       .from("[data-c=mandala]", { autoAlpha: 0, scale: 0.94, duration: 2.6, ease: ease.gentleGsap }, 0)
+      .from("[data-c=heading]", { autoAlpha: 0, y: 10, duration: 1.4 }, 0.2)
+      .from("[data-c=name]", { yPercent: 105, duration: 1.8, stagger: 0.25 }, 0.4)
+      .from("[data-c=amp]", { autoAlpha: 0, scale: 0.7, duration: 1.6 }, 0.7)
+      // the photograph is unveiled from the bottom of its arch, then settles
+      .from("[data-c=mount]", { autoAlpha: 0, y: 16, duration: 1.6 }, 1)
       .fromTo(
-        "[data-c=arch]",
+        "[data-c=photo]",
         { clipPath: "inset(100% 0% 0% 0%)" },
-        { clipPath: "inset(0% 0% 0% 0%)", duration: 2.2, ease: "expo.inOut" },
-        0.1,
+        { clipPath: "inset(0% 0% 0% 0%)", duration: 2, ease: "expo.inOut" },
+        1.1,
       )
-      .from("[data-c=heading]", { autoAlpha: 0, y: 10, duration: 1.4 }, 0.5)
-      .from("[data-c=name]", { yPercent: 105, duration: 1.8, stagger: 0.25 }, 0.7)
-      .from("[data-c=amp]", { autoAlpha: 0, scale: 0.7, duration: 1.6 }, 1)
-      .from("[data-c=bouquet]", { autoAlpha: 0, y: 12, scale: 0.92, duration: 1.8 }, 1.3)
-      .from("[data-c=detail]", { autoAlpha: 0, y: 10, duration: 1.3, stagger: 0.18 }, 1.7);
+      .from("[data-c=photo-img]", { scale: 1.06, duration: 2.8, ease: ease.gentleGsap }, 1.1)
+      .from("[data-c=date]", { autoAlpha: 0, y: 10, duration: 1.3 }, 2.4)
+      .from("[data-c=hashtag]", { autoAlpha: 0, y: 8, duration: 1.3 }, 2.8);
   }, root);
 
   return (
@@ -53,13 +59,6 @@ export function Closing({ heading, names: [first, second], date, hashtag }: Clos
         <Mandala className="w-full animate-spin-slow" />
       </div>
 
-      {/* the same jharokha arch as the hero, closing the book */}
-      <div
-        data-c="arch"
-        aria-hidden
-        className="frame pointer-events-none absolute top-1/2 left-1/2 -z-10 h-[min(80svh,44rem)] w-[min(86vw,32rem)] -translate-x-1/2 -translate-y-1/2 rounded-arch"
-      />
-
       <Petals />
 
       <div className="relative flex flex-col items-center text-center">
@@ -67,7 +66,7 @@ export function Closing({ heading, names: [first, second], date, hashtag }: Clos
           {heading}
         </p>
 
-        <p className="mt-8 text-maroon-500 md:mt-10">
+        <p className="mt-6 text-maroon-500 md:mt-8">
           <span className="sr-only">
             {first} and {second}
           </span>
@@ -88,14 +87,30 @@ export function Closing({ heading, names: [first, second], date, hashtag }: Clos
           </span>
         </p>
 
-        <div data-c="bouquet" className="mt-7 md:mt-9">
-          <Bouquet className="w-20 text-gold-500 md:w-24" />
-        </div>
+        {/* photograph in a jharokha arch, mounted on paper with a gold hairline */}
+        <figure
+          data-c="mount"
+          className="paper frame mt-8 w-[min(66vw,15.5rem)] rounded-arch p-2.5 shadow-soft md:mt-10 md:w-[17.5rem] md:p-3"
+        >
+          <div data-c="photo" className="relative aspect-[4/5] overflow-hidden rounded-arch bg-parchment-200">
+            <Image
+              data-c="photo-img"
+              src={photo.src}
+              alt={photo.alt}
+              fill
+              sizes="(min-width: 768px) 17.5rem, 66vw"
+              className="object-cover"
+              style={{ objectPosition: photo.focus ?? "50% 30%" }}
+            />
+          </div>
+        </figure>
 
-        <p data-c="detail" className="type-subheading mt-7 text-ink md:mt-9">
+        <OrnamentDivider className="mt-8 w-36 text-gold-500 md:mt-10" />
+
+        <p data-c="date" className="type-subheading mt-6 text-ink">
           {date}
         </p>
-        <p data-c="detail" className="type-subheading mt-3 italic text-gold-700">
+        <p data-c="hashtag" className="type-subheading mt-2 italic text-gold-700">
           {hashtag}
         </p>
       </div>

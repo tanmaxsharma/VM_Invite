@@ -35,6 +35,26 @@ export type Place = {
   mapsUrl?: string;
 };
 
+export type MapLocation = {
+  /** e.g. the main venue's name; leave empty until confirmed */
+  name: string;
+  address: string;
+  /** Google Maps "Embed a map" src (https://www.google.com/maps/embed?pb=…). Empty → an elegant placeholder is shown. */
+  embedUrl: string;
+  /** Google Maps share link. Empty → no "Get directions" button. */
+  directionsUrl: string;
+  /** Shown in place of the map while embedUrl is empty */
+  pendingMessage: string;
+};
+
+export type Photo = {
+  /** Path under /public */
+  src: string;
+  alt: string;
+  /** CSS object-position, used to keep faces in frame, e.g. "50% 30%" */
+  focus?: string;
+};
+
 export type WeddingData = {
   bride: Person;
   groom: Person;
@@ -48,8 +68,6 @@ export type WeddingData = {
   city?: string;
   /** Optional line after the city, e.g. the state */
   region?: string;
-  /** Shown exactly as written on the closing page */
-  hashtag: string;
   /** Background music, played only after the guest opens the invitation */
   music?: {
     /** Path under /public, e.g. "/audio/wedding.mp3" */
@@ -84,9 +102,16 @@ export type WeddingData = {
     intro?: string;
     /** In the order they should appear */
     places: Place[];
+    /** The one map shown under the list of places */
+    map: MapLocation;
   };
   closing: {
     heading: string;
+    /** Optional override; by default the wedding date is written out, e.g. "15th November 2026" */
+    date?: string;
+    /** Shown exactly as written */
+    hashtag: string;
+    photo: Photo;
   };
   meta: {
     title: string;
