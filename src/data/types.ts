@@ -6,18 +6,18 @@
 export type Person = {
   firstName: string;
   lastName?: string;
-  /** e.g. "Son of Mrs. … & Mr. …" — shown under the name when provided */
-  parents?: string;
 };
+
+/** Selects the artwork and palette of an event card */
+export type EventMotif = "haldi" | "sangeet" | "reception" | "barat" | "rituals" | "afterparty";
 
 export type ScheduleEvent = {
   /** Only as provided, e.g. "Evening". Omit when no time is known — none is shown. */
   time?: string;
   title: string;
+  motif: EventMotif;
   /** Must match a `locations.places[].name` to be listed under that place */
   venue: string;
-  /** Link to the venue on a map. Leave empty until a real link exists; no directions link is shown without it. */
-  mapsUrl?: string;
 };
 
 export type ScheduleDay = {

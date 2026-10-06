@@ -9,6 +9,7 @@ import { OrnateLink } from "@/components/ui/OrnateLink";
 import { Mandala } from "@/components/decorations/Mandala";
 import { CornerOrnament } from "@/components/decorations/CornerOrnament";
 import { OrnamentDivider } from "@/components/decorations/OrnamentDivider";
+import { FloralSpray } from "@/components/decorations/FloralSpray";
 
 export type LocationEntry = Place & {
   /** Celebrations held here, taken from the schedule */
@@ -109,23 +110,25 @@ export function Locations({ heading, intro, places, map }: LocationsProps) {
           </div>
 
           {/* the map, mounted like an inset plate: paper border, gold hairlines, corner ornaments */}
-          <div
-            data-l="map-frame"
-            className="paper relative rounded-[1.5rem] border border-gold-500/55 p-2.5 shadow-card md:p-3.5"
-          >
-            <CornerOrnament corner="top-left" className={`${corner} -top-1 -left-1`} />
-            <CornerOrnament corner="top-right" className={`${corner} -top-1 -right-1`} />
-            <CornerOrnament corner="bottom-left" className={`${corner} -bottom-1 -left-1`} />
-            <CornerOrnament corner="bottom-right" className={`${corner} -right-1 -bottom-1`} />
-            <div className="relative aspect-[4/5] min-h-72 overflow-hidden rounded-[1.1rem] border border-gold-500/30 bg-parchment-100 sm:aspect-[4/3] md:aspect-[16/10] lg:aspect-[16/9]">
-              <iframe
-                src={map.embedUrl}
-                title={`${map.name} location`}
-                loading="lazy"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
-                className="absolute inset-0 size-full border-0 [filter:sepia(0.12)_saturate(0.9)]"
-              />
+          <div className="relative">
+            <FloralSpray corner="top-left" className="pointer-events-none absolute -top-8 -left-6 z-10 w-28 md:-top-12 md:-left-14 md:w-40" />
+            <div
+              data-l="map-frame"
+              className="paper relative rounded-[1.5rem] border border-gold-500/55 p-2.5 shadow-card md:p-3.5"
+            >
+              <CornerOrnament corner="top-right" className={`${corner} -top-1 -right-1`} />
+              <CornerOrnament corner="bottom-left" className={`${corner} -bottom-1 -left-1`} />
+              <CornerOrnament corner="bottom-right" className={`${corner} -right-1 -bottom-1`} />
+              <div className="relative aspect-square min-h-72 overflow-hidden rounded-[1.1rem] border border-gold-500/30 bg-parchment-100 sm:aspect-[4/3] md:aspect-[16/10] lg:aspect-[16/9]">
+                <iframe
+                  src={map.embedUrl}
+                  title={`${map.name} location`}
+                  loading="lazy"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
+                  className="absolute inset-0 size-full border-0 [filter:sepia(0.12)_saturate(0.9)]"
+                />
+              </div>
             </div>
           </div>
 

@@ -9,6 +9,7 @@ import { Countdown } from "@/components/ui/Countdown";
 import { CornerOrnament } from "@/components/decorations/CornerOrnament";
 import { OrnamentDivider } from "@/components/decorations/OrnamentDivider";
 import { PetalBurst } from "@/components/decorations/PetalBurst";
+import { FloralSpray } from "@/components/decorations/FloralSpray";
 
 type SaveTheDateProps = {
   couple: string;
@@ -72,10 +73,10 @@ export function SaveTheDate({ couple, date, target, teaser, hint, countdownLabel
         data-std="page"
         className="paper frame relative mx-auto max-w-[34rem] rounded-card px-5 pt-16 pb-14 text-center shadow-card sm:px-10 md:pt-20 md:pb-16"
       >
-        <CornerOrnament corner="top-left" className={`${corner} top-3 left-3`} />
+        <FloralSpray corner="top-left" className="pointer-events-none absolute -top-7 -left-5 z-10 w-28 md:-top-10 md:-left-12 md:w-40" />
         <CornerOrnament corner="top-right" className={`${corner} top-3 right-3`} />
         <CornerOrnament corner="bottom-left" className={`${corner} bottom-3 left-3`} />
-        <CornerOrnament corner="bottom-right" className={`${corner} right-3 bottom-3`} />
+        <FloralSpray corner="bottom-right" className="pointer-events-none absolute -right-5 -bottom-7 z-10 w-28 md:-right-12 md:-bottom-10 md:w-40" />
 
         <p data-std="intro" className="type-meta text-gold-700">
           {couple}

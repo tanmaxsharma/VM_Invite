@@ -20,7 +20,6 @@ export function WeddingTemplate({ data }: { data: WeddingData }) {
     data.nameOrder === "groom-first" ? [data.groom, data.bride] : [data.bride, data.groom];
   const firstNames: [string, string] = [couple[0].firstName, couple[1].firstName];
   const place = [data.city, data.region].filter(Boolean).join(", ") || undefined;
-  const role = (p: Person) => (p === data.groom ? "The Groom" : "The Bride");
 
   // Each place lists the celebrations the schedule holds there.
   const places: LocationEntry[] = data.locations.places.map((p) => ({
@@ -39,14 +38,7 @@ export function WeddingTemplate({ data }: { data: WeddingData }) {
         musicSrc={data.music?.src}
       />
 
-      <Invitation
-        {...data.invitation}
-        families={[
-          { role: role(couple[0]), name: fullName(couple[0]), parents: couple[0].parents },
-          { role: role(couple[1]), name: fullName(couple[1]), parents: couple[1].parents },
-        ]}
-        place={place}
-      />
+      <Invitation {...data.invitation} place={place} />
 
       <SaveTheDate
         {...data.saveTheDate}

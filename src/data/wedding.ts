@@ -26,7 +26,6 @@ export const wedding = {
     countdownLabel: "Until we begin forever",
     completeMessage: "Today, we celebrate",
   },
-  // Add `mapsUrl` to an event once the real location link is known.
   schedule: {
     heading: "Wedding Celebrations",
     intro: "Three days of rituals, celebrations and togetherness",
@@ -34,22 +33,22 @@ export const wedding = {
       {
         date: "14 November",
         events: [
-          { time: "Afternoon", title: "Haldi", venue: "Home" },
-          { time: "Evening", title: "Sangeet", venue: "Welcome Hotel by ITC" },
+          { time: "Afternoon", title: "Haldi", motif: "haldi", venue: "Home" },
+          { time: "Evening", title: "Sangeet", motif: "sangeet", venue: "Welcome Hotel by ITC" },
         ],
       },
       {
         date: "15 November",
         events: [
-          { title: "Reception", venue: "Gyan Ganga College Ground" },
-          { time: "Midnight", title: "Barat", venue: "Welcome Hotel by ITC" },
+          { title: "Reception", motif: "reception", venue: "Gyan Ganga College Ground" },
+          { time: "Midnight", title: "Barat", motif: "barat", venue: "Welcome Hotel by ITC" },
         ],
       },
       {
         date: "16 November",
         events: [
-          { time: "Afternoon", title: "Rituals", venue: "Home" },
-          { time: "Evening", title: "Afterparty", venue: "Farmhouse" },
+          { time: "Afternoon", title: "Rituals", motif: "rituals", venue: "Home" },
+          { time: "Evening", title: "Afterparty", motif: "afterparty", venue: "Farmhouse" },
         ],
       },
     ],
@@ -72,7 +71,8 @@ export const wedding = {
       name: "Gyan Ganga College Ground",
       embedUrl:
         "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3669.168937125594!2d79.87290677491534!3d23.12749947910037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3981b23559386f89%3A0xf81383f511230a67!2sGyan%20Ganga%20College%20Ground!5e0!3m2!1sen!2sin!4v1790755811690!5m2!1sen!2sin",
-      directionsUrl: "",
+      // Google's place link for the same place ID as the embed above (…:0xf81383f511230a67)
+      directionsUrl: "https://www.google.com/maps?cid=17875776434541365863",
     },
   },
   closing: {

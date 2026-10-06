@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/Button";
 import { OrnamentDivider } from "@/components/decorations/OrnamentDivider";
 import { CornerOrnament } from "@/components/decorations/CornerOrnament";
 import { Mandala } from "@/components/decorations/Mandala";
-import { FloralSprig } from "@/components/decorations/FloralSprig";
+import { FloralSpray } from "@/components/decorations/FloralSpray";
+import { Toran } from "@/components/decorations/Toran";
+import { EventArtwork } from "@/components/decorations/EventArtwork";
 
 export const metadata: Metadata = {
   title: "Styleguide",
@@ -67,9 +69,16 @@ export default function StyleguidePage() {
       <section className="space-y-stack">
         <p className="type-meta text-gold-700">Decorations</p>
         <OrnamentDivider className="mx-auto w-60 text-gold-500" />
+        <Toran className="h-14" />
+        <div className="grid grid-cols-3 gap-4" style={{ ["--art" as string]: "#b9727a", ["--art-2" as string]: "#5e1d28", ["--art-3" as string]: "#b08d45", ["--leaf" as string]: "#8b9870" }}>
+          {(["haldi", "sangeet", "reception", "barat", "rituals", "afterparty"] as const).map((m) => (
+            <EventArtwork key={m} motif={m} className="w-full" />
+          ))}
+        </div>
         <div className="grid grid-cols-2 items-center gap-8 sm:grid-cols-3">
           <Mandala className="mx-auto w-40 text-gold-500 animate-spin-slow" />
-          <FloralSprig className="mx-auto h-40 text-brown-500" />
+          <FloralSpray className="mx-auto w-40" />
+          <FloralSpray flower="marigold" palette={{ "--bloom": "#f2a93b", "--bloom-deep": "#cf6a1d" }} className="mx-auto w-40" />
           <CornerOrnament className="mx-auto w-28 text-gold-500" />
         </div>
       </section>

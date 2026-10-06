@@ -4,9 +4,9 @@ import { useRef } from "react";
 import { gsap, prefersReducedMotion, useGsap } from "@/lib/gsap";
 import { ease } from "@/lib/motion";
 import { Mandala } from "@/components/decorations/Mandala";
-import { CornerOrnament } from "@/components/decorations/CornerOrnament";
 import { OrnamentDivider } from "@/components/decorations/OrnamentDivider";
-import { FloralSprig } from "@/components/decorations/FloralSprig";
+import { FloralSpray } from "@/components/decorations/FloralSpray";
+import { Toran } from "@/components/decorations/Toran";
 import { Mask } from "@/components/ui/Mask";
 
 export type HeroProps = {
@@ -18,8 +18,6 @@ export type HeroProps = {
   play: boolean;
   inert?: boolean;
 };
-
-const corner = "absolute w-12 text-gold-500 opacity-70 md:w-20 lg:w-24";
 
 export function Hero({ names: [first, second], place, play, inert }: HeroProps) {
   const root = useRef<HTMLElement>(null);
@@ -42,7 +40,8 @@ export function Hero({ names: [first, second], place, play, inert }: HeroProps) 
         .from("[data-h=amp]", { autoAlpha: 0, scale: 0.7, duration: 1.6 }, 1)
         .fromTo("[data-h=divider]", { clipPath: "inset(0% 50% 0% 50%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.6, ease: "expo.inOut" }, 1.3)
         .from("[data-h=details]", { autoAlpha: 0, y: 12, duration: 1.2, stagger: 0.12 }, 1.6)
-        .from("[data-h=decor]", { autoAlpha: 0, duration: 2, stagger: 0.1, ease: "power1.out" }, 0.9)
+        .from("[data-h=decor]", { autoAlpha: 0, scale: 0.94, duration: 2, stagger: 0.12, ease: "power1.out" }, 0.9)
+        .from("[data-h=toran]", { yPercent: -110, duration: 1.8, ease: ease.cinematicGsap }, 0.4)
         .from("[data-h=cue]", { autoAlpha: 0, y: -8, duration: 1.2 }, 2.6);
 
       // Soft parallax as the hero scrolls away: background slower, foreground faster.
@@ -83,15 +82,32 @@ export function Hero({ names: [first, second], place, play, inert }: HeroProps) 
         className="frame pointer-events-none absolute top-1/2 left-1/2 -z-10 h-[min(84svh,46rem)] w-[min(88vw,36rem)] -translate-x-1/2 -translate-y-1/2 rounded-arch"
       />
 
-      <CornerOrnament data-h="decor" corner="top-left" className={`${corner} top-4 left-4 md:top-8 md:left-8`} />
-      <CornerOrnament data-h="decor" corner="top-right" className={`${corner} top-4 right-4 md:top-8 md:right-8`} />
+      {/* soft watercolour light behind the arch */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 -z-20"
+        style={{
+          background:
+            "radial-gradient(45% 35% at 50% 40%, color-mix(in oklab, var(--color-gold-300) 22%, transparent), transparent 75%), radial-gradient(40% 30% at 30% 75%, color-mix(in oklab, var(--color-maroon-300) 12%, transparent), transparent 75%), radial-gradient(40% 30% at 72% 70%, color-mix(in oklab, var(--color-saffron-300) 14%, transparent), transparent 75%)",
+        }}
+      />
 
-      {/* foreground sprigs */}
-      <div data-h="sprig" aria-hidden className="pointer-events-none absolute -bottom-4 left-[2%] md:left-[6%]">
-        <FloralSprig data-h="decor" className="h-28 -rotate-12 text-brown-300 md:h-56 lg:h-72" />
+      {/* marigold toran across the top of the cover */}
+      <div data-h="toran" className="pointer-events-none absolute inset-x-0 top-0 h-12 md:h-16">
+        <Toran className="h-full" />
       </div>
-      <div data-h="sprig" aria-hidden className="pointer-events-none absolute right-[2%] -bottom-4 md:right-[6%]">
-        <FloralSprig data-h="decor" className="h-28 rotate-12 -scale-x-100 text-brown-300 md:h-56 lg:h-72" />
+
+      {/* floral sprays anchoring the base of the arch (parallax wrappers) */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-1/2 left-1/2 -z-10 h-[min(84svh,46rem)] w-[min(88vw,36rem)] -translate-x-1/2 -translate-y-1/2"
+      >
+        <div data-h="sprig" className="absolute -bottom-6 -left-8 md:-bottom-8 md:-left-24">
+          <FloralSpray data-h="decor" corner="bottom-left" className="w-36 md:w-64" />
+        </div>
+        <div data-h="sprig" className="absolute -right-8 -bottom-6 md:-right-24 md:-bottom-8">
+          <FloralSpray data-h="decor" corner="bottom-right" className="w-36 md:w-64" />
+        </div>
       </div>
 
       <div data-h="content" className="relative flex flex-col items-center text-center">

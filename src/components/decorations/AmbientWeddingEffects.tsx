@@ -1,7 +1,8 @@
 "use client";
 
-import type { CSSProperties } from "react";
-import { prefersReducedMotion } from "@/lib/gsap";
+import { useRef, type CSSProperties } from "react";
+import { useLenis } from "lenis/react";
+import { gsap, prefersReducedMotion } from "@/lib/gsap";
 import { Butterfly } from "./Butterfly";
 
 type Kind = "blush" | "ivory" | "gold" | "leaf";
@@ -59,6 +60,16 @@ function Shape({ kind, size }: { kind: Kind; size: number }) {
  * Rendered only once the invitation is open; absent for reduced motion.
  */
 export function AmbientWeddingEffects() {
+  const drift = useRef<HTMLDivElement>(null);
+  const nudge = useRef<((value: number) => void) | null>(null);
+
+  // Petals lag gently against the scroll and settle back when it stops.
+  useLenis(({ velocity }) => {
+    if (!drift.current) return;
+    nudge.current ??= gsap.quickTo(drift.current, "y", { duration: 1.4, ease: "power3.out" });
+    nudge.current(gsap.utils.clamp(-36, 36, -velocity * 2.2));
+  });
+
   // Rendered client-side after the guest's tap, so reading the preference here is safe.
   if (prefersReducedMotion()) return null;
 
@@ -67,26 +78,28 @@ export function AmbientWeddingEffects() {
       aria-hidden
       className="pointer-events-none fixed inset-0 z-0 animate-[ambient-in_3s_ease-out_both] overflow-hidden select-none"
     >
-      {ELEMENTS.map(([left, size, fall, delay, drift, flutter, kind], i) => (
-        <span
-          key={i}
-          className={`absolute -top-6 ${i >= MOBILE_COUNT ? "max-md:hidden" : ""}`}
-          style={
-            {
-              left: `${left}%`,
-              "--petal-drift": `${drift}vw`,
-              animation: `petal-fall ${fall}s linear -${delay}s infinite`,
-            } as CSSProperties
-          }
-        >
+      <div ref={drift} className="absolute inset-0">
+        {ELEMENTS.map(([left, size, fall, delay, driftVw, flutter, kind], i) => (
           <span
-            className="block"
-            style={{ animation: `petal-flutter ${flutter}s ease-in-out -${delay % flutter}s infinite` }}
+            key={i}
+            className={`absolute -top-6 ${i >= MOBILE_COUNT ? "max-md:hidden" : ""}`}
+            style={
+              {
+                left: `${left}%`,
+                "--petal-drift": `${driftVw}vw`,
+                animation: `petal-fall ${fall}s linear -${delay}s infinite`,
+              } as CSSProperties
+            }
           >
-            <Shape kind={kind} size={size} />
+            <span
+              className="block"
+              style={{ animation: `petal-flutter ${flutter}s ease-in-out -${delay % flutter}s infinite` }}
+            >
+              <Shape kind={kind} size={size} />
+            </span>
           </span>
-        </span>
-      ))}
+        ))}
+      </div>
       <Butterfly />
     </div>
   );

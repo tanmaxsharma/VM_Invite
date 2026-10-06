@@ -7,6 +7,7 @@ import { gsap, prefersReducedMotion, useGsap } from "@/lib/gsap";
 import { ease } from "@/lib/motion";
 import { Mask } from "@/components/ui/Mask";
 import { Mandala } from "@/components/decorations/Mandala";
+import { FloralSpray } from "@/components/decorations/FloralSpray";
 import { OrnamentDivider } from "@/components/decorations/OrnamentDivider";
 
 type ClosingProps = {
@@ -40,6 +41,7 @@ export function Closing({ heading, names: [first, second], date, hashtag, photo 
         1.1,
       )
       .from("[data-c=photo-img]", { scale: 1.06, duration: 2.8, ease: ease.gentleGsap }, 1.1)
+      .from("[data-c=spray]", { autoAlpha: 0, scale: 0.9, rotate: -6, duration: 1.8, stagger: 0.15 }, 1.8)
       .from("[data-c=date]", { autoAlpha: 0, y: 10, duration: 1.3 }, 2.4)
       .from("[data-c=hashtag]", { autoAlpha: 0, y: 8, duration: 1.3 }, 2.8);
   }, root);
@@ -85,22 +87,26 @@ export function Closing({ heading, names: [first, second], date, hashtag, photo 
         </p>
 
         {/* photograph in a jharokha arch, mounted on paper with a gold hairline */}
-        <figure
-          data-c="mount"
-          className="paper frame mt-8 w-[min(66vw,15.5rem)] rounded-arch p-2.5 shadow-soft md:mt-10 md:w-[17.5rem] md:p-3"
-        >
-          <div data-c="photo" className="relative aspect-[4/5] overflow-hidden rounded-arch bg-parchment-200">
-            <Image
-              data-c="photo-img"
-              src={photo.src}
-              alt={photo.alt}
-              fill
-              sizes="(min-width: 768px) 17.5rem, 66vw"
-              className="object-cover"
-              style={{ objectPosition: photo.focus ?? "50% 30%" }}
-            />
-          </div>
-        </figure>
+        <div className="relative mt-8 md:mt-10">
+          <FloralSpray data-c="spray" corner="bottom-left" className="pointer-events-none absolute -bottom-7 -left-12 z-10 w-28 md:-bottom-9 md:-left-24 md:w-44" />
+          <FloralSpray data-c="spray" corner="bottom-right" className="pointer-events-none absolute -right-12 -bottom-7 z-10 w-28 md:-right-24 md:-bottom-9 md:w-44" />
+          <figure
+            data-c="mount"
+            className="paper frame w-[min(66vw,15.5rem)] rounded-arch p-2.5 shadow-soft md:w-[17.5rem] md:p-3"
+          >
+            <div data-c="photo" className="relative aspect-[4/5] overflow-hidden rounded-arch bg-parchment-200">
+              <Image
+                data-c="photo-img"
+                src={photo.src}
+                alt={photo.alt}
+                fill
+                sizes="(min-width: 768px) 17.5rem, 66vw"
+                className="object-cover"
+                style={{ objectPosition: photo.focus ?? "50% 30%" }}
+              />
+            </div>
+          </figure>
+        </div>
 
         <OrnamentDivider className="mt-8 w-36 text-gold-500 md:mt-10" />
 
