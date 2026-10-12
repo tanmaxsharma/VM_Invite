@@ -43,11 +43,43 @@ export function weddingDateParts(date: string, timeZone: string) {
   return { weekday: parts.weekday, day: parts.day, month: parts.month, year: parts.year };
 }
 
-/** "7:00 PM IST" */
-export function clockTime(date: string, timeZone: string, time: string) {
-  return formatter(timeZone, { hour: "numeric", minute: "2-digit", hour12: true, timeZoneName: "short" })
-    .format(zonedTime(date, timeZone, time))
+/**
+ * UTC timestamp of a local "YYYY-MM-DDTHH:mm" in an IANA zone,
+ * e.g. zonedLocal("2026-11-15T19:00", "Asia/Kolkata") → 2026-11-15T13:30:00Z.
+ */
+export function zonedLocal(local: string, timeZone: string) {
+  const [date, time = "00:00"] = local.split("T");
+  return zonedTime(date, timeZone, time);
+}
+
+/** "8:00 PM" */
+function clock(ts: number, timeZone: string) {
+  return formatter(timeZone, { hour: "numeric", minute: "2-digit", hour12: true })
+    .format(ts)
+    .replace(/\s+/g, " ")
     .replace(/\b[ap]m\b/i, (m) => m.toUpperCase());
+}
+
+/** "8:00 PM – 11:00 PM", or "12:00 PM onwards" when there is no end. */
+export function eventTimeLabel(start: string, end: string | undefined, timeZone: string) {
+  const from = clock(zonedLocal(start, timeZone), timeZone);
+  return end ? `${from} – ${clock(zonedLocal(end, timeZone), timeZone)}` : `${from} onwards`;
+}
+
+/** "14 November" — or "15 – 16 November" when the event runs past midnight into the next day. */
+export function eventDateLabel(start: string, end: string | undefined, timeZone: string) {
+  const dayMonth = (local: string) => {
+    const parts = Object.fromEntries(
+      formatter(timeZone, { day: "numeric", month: "long" })
+        .formatToParts(zonedLocal(local, timeZone))
+        .map((p) => [p.type, p.value]),
+    );
+    return { day: parts.day, month: parts.month };
+  };
+  const from = dayMonth(start);
+  if (!end || end.split("T")[0] === start.split("T")[0]) return `${from.day} ${from.month}`;
+  const to = dayMonth(end);
+  return from.month === to.month ? `${from.day} – ${to.day} ${to.month}` : `${from.day} ${from.month} – ${to.day} ${to.month}`;
 }
 
 const SUFFIX: Record<Intl.LDMLPluralRule, string> = { one: "st", two: "nd", few: "rd", other: "th", zero: "th", many: "th" };

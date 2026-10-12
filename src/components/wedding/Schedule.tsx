@@ -1,18 +1,32 @@
 "use client";
 
 import { useRef, type CSSProperties } from "react";
-import type { EventMotif, ScheduleDay } from "@/data/types";
+import type { EventMotif } from "@/data/types";
+import type { CalendarAction } from "@/lib/calendar";
 import { gsap, prefersReducedMotion, useGsap } from "@/lib/gsap";
 import { ease } from "@/lib/motion";
 import { Mask } from "@/components/ui/Mask";
+import { AddToCalendar } from "@/components/ui/AddToCalendar";
 import { OrnamentDivider } from "@/components/decorations/OrnamentDivider";
 import { FloralSpray } from "@/components/decorations/FloralSpray";
 import { EventArtwork } from "@/components/decorations/EventArtwork";
 
+/** One card, with its wording already worked out from the event's start and end. */
+export type ScheduleCard = {
+  title: string;
+  motif: EventMotif;
+  venue: string;
+  /** e.g. "14 November", or "15 – 16 November" for an event that runs past midnight */
+  date: string;
+  /** e.g. "8:00 PM – 11:00 PM", or "12:00 PM onwards" */
+  time: string;
+  calendar: CalendarAction;
+};
+
 type ScheduleProps = {
   heading: string;
   intro?: string;
-  days: ScheduleDay[];
+  events: ScheduleCard[];
 };
 
 type Theme = {
@@ -84,7 +98,7 @@ const windowWash = (t: Theme) =>
 
 const ARCH = "50% 50% 14px 14px / 34% 34% 14px 14px";
 
-function EventCard({ date, time, title, venue, motif }: { date: string; time?: string; title: string; venue: string; motif: EventMotif }) {
+function EventCard({ date, time, title, venue, motif, calendar }: ScheduleCard) {
   const t = THEMES[motif];
   const vars = { "--art": t.art[0], "--art-2": t.art[1], "--art-3": t.art[2], "--leaf": "#8b9870" } as CSSProperties;
   const spray = { "--bloom": t.bloom[0], "--bloom-deep": t.bloom[1], "--leaf": t.dark ? "#a9ac85" : "#8b9870" };
@@ -125,14 +139,19 @@ function EventCard({ date, time, title, venue, motif }: { date: string; time?: s
           <div data-sc="detail" className="relative">
             <OrnamentDivider className="mx-auto mt-3 w-24" style={{ color: t.meta }} />
           </div>
-          {time && (
-            <p data-sc="detail" className="type-meta relative mt-4" style={{ color: t.meta }}>
-              {time}
-            </p>
-          )}
-          <p data-sc="detail" className={`type-subheading relative italic ${time ? "mt-1" : "mt-4"}`} style={{ color: t.text }}>
+          <p data-sc="detail" className="type-meta relative mt-4" style={{ color: t.meta }}>
+            {time}
+          </p>
+          <p data-sc="detail" className="type-subheading relative mt-1 italic" style={{ color: t.text }}>
             {venue}
           </p>
+          <div
+            data-sc="detail"
+            className="relative mt-6"
+            style={{ color: t.title, "--cal-line": t.line, "--cal-bg": t.paper } as CSSProperties}
+          >
+            <AddToCalendar action={calendar} variant="card" />
+          </div>
         </div>
       </div>
     </article>
@@ -140,7 +159,7 @@ function EventCard({ date, time, title, venue, motif }: { date: string; time?: s
 }
 
 /** The celebration itinerary — six cards from one stationery suite. */
-export function Schedule({ heading, intro, days }: ScheduleProps) {
+export function Schedule({ heading, intro, events }: ScheduleProps) {
   const root = useRef<HTMLElement>(null);
 
   useGsap(() => {
@@ -194,13 +213,11 @@ export function Schedule({ heading, intro, days }: ScheduleProps) {
         </div>
       </header>
 
-      {/* one row per day on wider screens */}
+      {/* two cards to a row on wider screens, in the order of the days */}
       <div className="mx-auto mt-12 grid max-w-[48rem] gap-x-8 gap-y-10 sm:grid-cols-2 md:mt-16 md:gap-y-14">
-        {days.flatMap((day) =>
-          day.events.map((event) => (
-            <EventCard key={`${day.date}-${event.title}`} date={day.date} time={event.time} title={event.title} venue={event.venue} motif={event.motif} />
-          )),
-        )}
+        {events.map((event) => (
+          <EventCard key={`${event.date}-${event.title}`} {...event} />
+        ))}
       </div>
     </section>
   );

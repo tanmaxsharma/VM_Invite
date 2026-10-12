@@ -9,7 +9,7 @@ import { Mask } from "@/components/ui/Mask";
 import { ScratchCard } from "@/components/ui/ScratchCard";
 import { Countdown } from "@/components/ui/Countdown";
 import { AddToCalendar } from "@/components/ui/AddToCalendar";
-import type { CalendarEvent } from "@/lib/calendar";
+import type { CalendarAction } from "@/lib/calendar";
 import { CornerOrnament } from "@/components/decorations/CornerOrnament";
 import { Mandala } from "@/components/decorations/Mandala";
 import { OrnamentDivider } from "@/components/decorations/OrnamentDivider";
@@ -29,7 +29,7 @@ type SaveTheDateProps = {
   completeMessage: string;
   continueLabel: string;
   /** The calendar event offered under the countdown */
-  calendar: CalendarEvent & { label: string; fileName: string };
+  calendar: CalendarAction;
 };
 
 const CARDS = 3;
@@ -286,7 +286,7 @@ export function SaveTheDate({
                 <Countdown target={target} completeMessage={completeMessage} />
               </div>
               <div className="mt-6 md:mt-7 [@media(max-height:640px)]:mt-4">
-                <AddToCalendar {...calendar} />
+                <AddToCalendar action={calendar} />
               </div>
             </div>
           </div>

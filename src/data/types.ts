@@ -37,23 +37,26 @@ export type Photo = {
 /** Selects the artwork and palette of an event card */
 export type EventMotif = "haldi" | "sangeet" | "reception" | "barat" | "rituals" | "afterparty";
 
+/**
+ * One celebration. The date and time printed on its card and its calendar entries are all
+ * generated from `start` and `end`, so they cannot disagree.
+ */
 export type ScheduleEvent = {
-  /** Only as provided, e.g. "Evening". Omit when no time is known — none is shown. */
-  time?: string;
   title: string;
   motif: EventMotif;
+  /** Shown on the card and used as the calendar location */
   venue: string;
-};
-
-export type ScheduleDay = {
-  /** Display date, "<day> <month>", e.g. "14 November" */
-  date: string;
-  /** In chronological order */
-  events: ScheduleEvent[];
+  /** Local start in the wedding's `timeZone`, "YYYY-MM-DDTHH:mm" */
+  start: string;
+  /**
+   * Local end in the same form (it may fall on the next day, e.g. past midnight).
+   * Leave it out when the event is open-ended ("onwards"): no end time is invented.
+   */
+  end?: string;
 };
 
 export type MapLocation = {
-  /** Venue shown above the map, e.g. "Gyan Ganga College Ground" */
+  /** Venue shown above the map, e.g. "Gyan Ganga College Campus" */
   name: string;
   /** Small line above the venue name, e.g. "The Reception" */
   caption?: string;
@@ -110,20 +113,26 @@ export type WeddingData = {
     completeMessage: string;
     /** Shown once the gate opens */
     continueLabel: string;
-    /** The "Add to Calendar" button under the countdown (downloads an .ics file) */
+    /**
+     * The main "Add to Calendar" button under the countdown. It opens Google Calendar with the event
+     * filled in (and offers an .ics file for Apple and Outlook). The location is the wedding venue
+     * shown in `locations`.
+     */
     calendar: {
       label: string;
-      /** When the wedding starts on `weddingDate`, 24-hour "HH:mm" in `timeZone`. No end time is written. */
-      startTime: string;
-      /** The event is titled "<couple> — <eventName>" */
+      /** Local start in `timeZone`, "YYYY-MM-DDTHH:mm" */
+      start: string;
+      /** Local end, same form. Leave out if unknown; Google's link then isn't offered, only the .ics file. */
+      end?: string;
+      /** The event is titled "<couple> <eventName>", e.g. "Vishesh Jain & Mehak Jain Wedding" */
       eventName: string;
     };
   };
   schedule: {
     heading: string;
     intro?: string;
-    /** In chronological order */
-    days: ScheduleDay[];
+    /** In chronological order — the cards appear in this order */
+    events: ScheduleEvent[];
   };
   locations: {
     heading: string;

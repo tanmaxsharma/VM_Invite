@@ -1,5 +1,8 @@
 import type { WeddingData } from "./types";
 
+// Shown on the Reception card and above the map, so the two always read the same.
+const receptionVenue = "Gyan Ganga College Campus";
+
 export const wedding = {
   bride: {
     firstName: "Mehak",
@@ -44,34 +47,21 @@ export const wedding = {
     labels: { month: "Month", day: "Day", year: "Year" },
     completeMessage: "Today, we celebrate",
     continueLabel: "Scroll to continue",
-    // 7:00 PM IST on the wedding day. Only a start time is given, so the .ics file has no end time.
-    calendar: { label: "Add to Calendar", startTime: "19:00", eventName: "Wedding" },
+    // The wedding itself, 6:00–11:00 PM IST on the wedding day.
+    calendar: { label: "Add to Calendar", start: "2026-11-15T18:00", end: "2026-11-15T23:00", eventName: "Wedding" },
   },
+  // Every time is IST (`timeZone` above). An event with no `end` is open-ended: none is shown or invented.
   schedule: {
     heading: "Wedding Celebrations",
     intro: "Three days of rituals, celebrations and togetherness",
-    days: [
-      {
-        date: "14 November",
-        events: [
-          { time: "Afternoon", title: "Haldi", motif: "haldi", venue: "Home" },
-          { time: "Evening", title: "Sangeet", motif: "sangeet", venue: "Welcome Hotel by ITC" },
-        ],
-      },
-      {
-        date: "15 November",
-        events: [
-          { title: "Reception", motif: "reception", venue: "Gyan Ganga College Ground" },
-          { time: "Midnight", title: "Barat", motif: "barat", venue: "Welcome Hotel by ITC" },
-        ],
-      },
-      {
-        date: "16 November",
-        events: [
-          { time: "Afternoon", title: "Rituals", motif: "rituals", venue: "Home" },
-          { time: "Evening", title: "Afterparty", motif: "afterparty", venue: "Farmhouse" },
-        ],
-      },
+    events: [
+      { title: "Haldi", motif: "haldi", venue: "Home", start: "2026-11-14T12:00" },
+      { title: "Sangeet", motif: "sangeet", venue: "Welcome Hotel by ITC", start: "2026-11-14T20:00", end: "2026-11-14T23:00" },
+      { title: "Reception", motif: "reception", venue: receptionVenue, start: "2026-11-15T19:00", end: "2026-11-15T23:00" },
+      // crosses midnight: it ends on the 16th
+      { title: "Barat", motif: "barat", venue: "Welcome Hotel by ITC", start: "2026-11-15T23:00", end: "2026-11-16T00:30" },
+      { title: "Rituals", motif: "rituals", venue: "Home", start: "2026-11-16T13:00", end: "2026-11-16T16:00" },
+      { title: "Afterparty", motif: "afterparty", venue: "Farmhouse", start: "2026-11-16T20:00" },
     ],
   },
   locations: {
@@ -81,7 +71,8 @@ export const wedding = {
     //   directionsUrl: Google Maps → Share → "Copy link" (the button only shows once set)
     map: {
       caption: "The Reception",
-      name: "Gyan Ganga College Ground",
+      name: receptionVenue,
+      // (the place name inside this link is Google's own listing and is left exactly as copied)
       embedUrl:
         "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3669.168937125594!2d79.87290677491534!3d23.12749947910037!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3981b23559386f89%3A0xf81383f511230a67!2sGyan%20Ganga%20College%20Ground!5e0!3m2!1sen!2sin!4v1790755811690!5m2!1sen!2sin",
       // Google's place link for the same place ID as the embed above (…:0xf81383f511230a67)
