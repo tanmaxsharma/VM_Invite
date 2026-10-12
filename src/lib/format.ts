@@ -66,7 +66,7 @@ export function eventTimeLabel(start: string, end: string | undefined, timeZone:
   return end ? `${from} – ${clock(zonedLocal(end, timeZone), timeZone)}` : `${from} onwards`;
 }
 
-/** "14 November" — or "15 – 16 November" when the event runs past midnight into the next day. */
+/** "14 November" — or "15 November" when the event runs past midnight into the next day. */
 export function eventDateLabel(start: string, end: string | undefined, timeZone: string) {
   const dayMonth = (local: string) => {
     const parts = Object.fromEntries(

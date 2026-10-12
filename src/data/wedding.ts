@@ -5,7 +5,7 @@ const receptionVenue = "Gyan Ganga College Campus";
 
 export const wedding = {
   bride: {
-    firstName: "Mehak",
+    firstName: "Mahak",
     lastName: "Jain",
     parents: { lead: "Daughter of", names: ["Smt. Meena Jain", "Shri Vijay Jain"] },
   },
@@ -27,7 +27,7 @@ export const wedding = {
   brand: {
     logo: {
       src: "/images/brand/mahvieenrose.png",
-      alt: "Vishesh and Mehak monogram with a gold rose",
+      alt: "Vishesh and Mahak monogram with a gold rose",
       width: 1536,
       height: 703,
     },
@@ -59,9 +59,9 @@ export const wedding = {
       { title: "Sangeet", motif: "sangeet", venue: "Welcome Hotel by ITC", start: "2026-11-14T20:00", end: "2026-11-14T23:00" },
       { title: "Reception", motif: "reception", venue: receptionVenue, start: "2026-11-15T19:00", end: "2026-11-15T23:00" },
       // crosses midnight: it ends on the 16th
-      { title: "Barat", motif: "barat", venue: "Welcome Hotel by ITC", start: "2026-11-15T23:00", end: "2026-11-16T00:30" },
+      { title: "Barat", motif: "barat", venue: "Welcome Hotel by ITC", start: "2026-11-15T23:00" },
       { title: "Rituals", motif: "rituals", venue: "Home", start: "2026-11-16T13:00", end: "2026-11-16T16:00" },
-      { title: "Afterparty", motif: "afterparty", venue: "Farmhouse", start: "2026-11-16T20:00" },
+      { title: "Afterparty", motif: "afterparty", venue: "Riverside Burrows", start: "2026-11-16T20:00" },
     ],
   },
   locations: {
@@ -88,8 +88,7 @@ export const wedding = {
   },
   closing: {
     heading: "With Love",
-    hashtag: "#VisheshlovesMehak",
-    // TEMPORARY: public/images/couple-placeholder.jpg is a stock photo by
+    hashtag: "#MahVieEnRose",
     // "shades by 43" (Unsplash License). Replace it with the couple's own
     // photograph (portrait, ideally 4:5), then update `alt` and `focus`.
     photo: {
@@ -99,7 +98,7 @@ export const wedding = {
     },
   },
   meta: {
-    title: "Vishesh & Mehak — Wedding Invitation",
-    description: "With the blessings of their families, Vishesh & Mehak warmly invite you to celebrate their wedding.",
+    title: "Vishesh & Mahak — Wedding Invitation",
+    description: "With the blessings of their families, Vishesh & Mahak warmly invite you to celebrate their wedding.",
   },
 } satisfies WeddingData;

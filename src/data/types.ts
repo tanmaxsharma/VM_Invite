@@ -124,7 +124,7 @@ export type WeddingData = {
       start: string;
       /** Local end, same form. Leave out if unknown; Google's link then isn't offered, only the .ics file. */
       end?: string;
-      /** The event is titled "<couple> <eventName>", e.g. "Vishesh Jain & Mehak Jain Wedding" */
+      /** The event is titled "<couple> <eventName>", e.g. "Vishesh Jain & Mahak Jain Wedding" */
       eventName: string;
     };
   };

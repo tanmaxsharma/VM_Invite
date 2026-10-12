@@ -17,7 +17,7 @@ import { Celebration } from "@/components/decorations/Celebration";
 import { FloralSpray } from "@/components/decorations/FloralSpray";
 
 type SaveTheDateProps = {
-  /** e.g. "Vishesh Jain & Mehak Jain" */
+  /** e.g. "Vishesh Jain & Mahak Jain" */
   couple: string;
   date: { weekday: string; day: string; month: string; year: string };
   /** e.g. "15th November 2026" — shown above the countdown */

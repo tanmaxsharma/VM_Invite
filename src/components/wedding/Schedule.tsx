@@ -16,7 +16,7 @@ export type ScheduleCard = {
   title: string;
   motif: EventMotif;
   venue: string;
-  /** e.g. "14 November", or "15 – 16 November" for an event that runs past midnight */
+  /** e.g. "14 November", or "15 November" for an event that runs past midnight */
   date: string;
   /** e.g. "8:00 PM – 11:00 PM", or "12:00 PM onwards" */
   time: string;
