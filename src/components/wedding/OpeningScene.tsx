@@ -5,11 +5,14 @@ import { gsap, prefersReducedMotion, useGsap } from "@/lib/gsap";
 import { ease } from "@/lib/motion";
 import { Mandala } from "@/components/decorations/Mandala";
 import { CornerOrnament } from "@/components/decorations/CornerOrnament";
+import type { Artwork } from "@/data/types";
 import { Envelope } from "./Envelope";
 
 type OpeningSceneProps = {
   /** First names, in display order */
   names: [string, string];
+  /** The couple's emblem for the wax seal */
+  logo?: Artwork;
   /** Fires synchronously inside the guest's tap — safe place to start audio. */
   onOpen: () => void;
   /** Fires as the scene starts dissolving — the hero should begin its entrance. */
@@ -20,7 +23,7 @@ type OpeningSceneProps = {
 
 const corner = "absolute w-14 text-gold-500 opacity-0 md:w-24 lg:w-32";
 
-export function OpeningScene({ names, onOpen, onReveal, onComplete }: OpeningSceneProps) {
+export function OpeningScene({ names, logo, onOpen, onReveal, onComplete }: OpeningSceneProps) {
   const root = useRef<HTMLDivElement>(null);
   const [opening, setOpening] = useState(false);
 
@@ -149,13 +152,13 @@ export function OpeningScene({ names, onOpen, onReveal, onComplete }: OpeningSce
 
       <div data-o="dim" aria-hidden className="pointer-events-none absolute inset-0 bg-brown-900 opacity-0" />
 
-      <div data-o="crest" aria-hidden className="relative flex items-center gap-3 text-gold-500 opacity-0">
+      <div data-o="crest" aria-hidden className="relative flex items-center gap-3 text-gold-500 opacity-0 [@media(max-height:520px)]:hidden">
         <span className="h-px w-8 bg-current" />
         <Mandala className="w-7" />
         <span className="h-px w-8 bg-current" />
       </div>
 
-      <p data-o="invited" className="type-heading relative mt-3 italic text-maroon-500 opacity-0 md:mt-4">
+      <p data-o="invited" className="type-heading relative mt-3 italic text-maroon-500 opacity-0 md:mt-4 [@media(max-height:520px)]:mt-0 [@media(max-height:520px)]:text-[1.5rem]!">
         You&rsquo;re Invited
       </p>
 
@@ -164,12 +167,12 @@ export function OpeningScene({ names, onOpen, onReveal, onComplete }: OpeningSce
         tabIndex={-1}
         aria-hidden
         onClick={open}
-        className="relative mt-6 cursor-pointer md:mt-9"
+        className="relative mt-6 cursor-pointer md:mt-9 [@media(max-height:520px)]:mt-3"
       >
-        <Envelope names={names} />
+        <Envelope names={names} logo={logo} />
       </button>
 
-      <div data-o="cta" className="relative mt-5 opacity-0 md:mt-10">
+      <div data-o="cta" className="relative mt-5 opacity-0 md:mt-10 [@media(max-height:520px)]:mt-1">
         <button
           type="button"
           onClick={open}

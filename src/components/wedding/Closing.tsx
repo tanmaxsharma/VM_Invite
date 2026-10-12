@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import type { Photo } from "@/data/types";
+import type { Artwork, Photo } from "@/data/types";
 import { gsap, prefersReducedMotion, useGsap } from "@/lib/gsap";
 import { ease } from "@/lib/motion";
 import { Mask } from "@/components/ui/Mask";
@@ -18,10 +18,12 @@ type ClosingProps = {
   date: string;
   hashtag: string;
   photo: Photo;
+  /** The couple's emblem, set small as a signature */
+  logo?: Artwork;
 };
 
 /** The last page of the invitation. */
-export function Closing({ heading, names: [first, second], date, hashtag, photo }: ClosingProps) {
+export function Closing({ heading, names: [first, second], date, hashtag, photo, logo }: ClosingProps) {
   const root = useRef<HTMLElement>(null);
 
   useGsap(() => {
@@ -29,6 +31,7 @@ export function Closing({ heading, names: [first, second], date, hashtag, photo 
     gsap
       .timeline({ defaults: { ease: ease.cinematicGsap }, scrollTrigger: { trigger: root.current, start: "top 60%" } })
       .from("[data-c=mandala]", { autoAlpha: 0, scale: 0.94, duration: 2.6, ease: ease.gentleGsap }, 0)
+      .from("[data-c=divider]", { autoAlpha: 0, duration: 1.2 }, 0.1)
       .from("[data-c=heading]", { autoAlpha: 0, y: 10, duration: 1.4 }, 0.2)
       .from("[data-c=name]", { yPercent: 105, duration: 1.8, stagger: 0.25 }, 0.4)
       .from("[data-c=amp]", { autoAlpha: 0, scale: 0.7, duration: 1.6 }, 0.7)
@@ -43,7 +46,8 @@ export function Closing({ heading, names: [first, second], date, hashtag, photo 
       .from("[data-c=photo-img]", { scale: 1.06, duration: 2.8, ease: ease.gentleGsap }, 1.1)
       .from("[data-c=spray]", { autoAlpha: 0, scale: 0.9, rotate: -6, duration: 1.8, stagger: 0.15 }, 1.8)
       .from("[data-c=date]", { autoAlpha: 0, y: 10, duration: 1.3 }, 2.4)
-      .from("[data-c=hashtag]", { autoAlpha: 0, y: 8, duration: 1.3 }, 2.8);
+      .from("[data-c=hashtag]", { autoAlpha: 0, y: 8, duration: 1.3 }, 2.8)
+      .from("[data-c=logo]", { autoAlpha: 0, y: 8, duration: 1.6 }, 3.2);
   }, root);
 
   return (
@@ -61,6 +65,10 @@ export function Closing({ heading, names: [first, second], date, hashtag, photo 
       </div>
 
       <div className="relative flex flex-col items-center text-center">
+        <div data-c="divider" aria-hidden className="mb-8 md:mb-10">
+          <OrnamentDivider className="w-32 text-gold-500" />
+        </div>
+
         <p id="closing-heading" data-c="heading" className="type-meta text-gold-700">
           {heading}
         </p>
@@ -88,11 +96,11 @@ export function Closing({ heading, names: [first, second], date, hashtag, photo 
 
         {/* photograph in a jharokha arch, mounted on paper with a gold hairline */}
         <div className="relative mt-8 md:mt-10">
-          <FloralSpray data-c="spray" corner="bottom-left" className="pointer-events-none absolute -bottom-7 -left-12 z-10 w-28 md:-bottom-9 md:-left-24 md:w-44" />
-          <FloralSpray data-c="spray" corner="bottom-right" className="pointer-events-none absolute -right-12 -bottom-7 z-10 w-28 md:-right-24 md:-bottom-9 md:w-44" />
+          <FloralSpray data-c="spray" corner="bottom-left" className="pointer-events-none absolute -bottom-7 -left-8 z-10 w-28 min-[400px]:-left-12 md:-bottom-9 md:-left-24 md:w-44" />
+          <FloralSpray data-c="spray" corner="bottom-right" className="pointer-events-none absolute -right-8 -bottom-7 z-10 w-28 min-[400px]:-right-12 md:-right-24 md:-bottom-9 md:w-44" />
           <figure
             data-c="mount"
-            className="paper frame w-[min(66vw,15.5rem)] rounded-arch p-2.5 shadow-soft md:w-[17.5rem] md:p-3"
+            className="paper frame w-[min(78vw,18.5rem)] rounded-arch p-2.5 shadow-soft md:w-[21rem] md:p-3"
           >
             <div data-c="photo" className="relative aspect-[4/5] overflow-hidden rounded-arch bg-parchment-200">
               <Image
@@ -100,7 +108,7 @@ export function Closing({ heading, names: [first, second], date, hashtag, photo 
                 src={photo.src}
                 alt={photo.alt}
                 fill
-                sizes="(min-width: 768px) 17.5rem, 66vw"
+                sizes="(min-width: 768px) 21rem, 78vw"
                 className="object-cover"
                 style={{ objectPosition: photo.focus ?? "50% 30%" }}
               />
@@ -116,6 +124,18 @@ export function Closing({ heading, names: [first, second], date, hashtag, photo 
         <p data-c="hashtag" className="type-subheading mt-2 italic text-gold-700">
           {hashtag}
         </p>
+
+        {logo && (
+          <Image
+            data-c="logo"
+            src={logo.src}
+            alt={logo.alt}
+            width={logo.width}
+            height={logo.height}
+            sizes="(min-width: 768px) 176px, 144px"
+            className="mt-10 h-auto w-36 md:w-44"
+          />
+        )}
       </div>
     </section>
   );

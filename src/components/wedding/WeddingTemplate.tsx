@@ -1,10 +1,12 @@
 import type { Person, WeddingData } from "@/data/types";
-import { ordinalDate, weddingDateParts, zonedTime } from "@/lib/format";
+import { clockTime, ordinalDate, weddingDateParts, zonedTime } from "@/lib/format";
 import { InvitationExperience } from "./InvitationExperience";
-import { Invitation } from "./Invitation";
+import { Blessings } from "./Blessings";
 import { SaveTheDate } from "./SaveTheDate";
 import { Schedule } from "./Schedule";
-import { Locations, type LocationEntry } from "./Locations";
+import { Locations } from "./Locations";
+import { Rsvp } from "./Rsvp";
+import type { HeroPerson } from "./Hero";
 import { Closing } from "./Closing";
 
 const fullName = (p: Person) => [p.firstName, p.lastName].filter(Boolean).join(" ");
@@ -20,43 +22,69 @@ export function WeddingTemplate({ data }: { data: WeddingData }) {
     data.nameOrder === "groom-first" ? [data.groom, data.bride] : [data.bride, data.groom];
   const firstNames: [string, string] = [couple[0].firstName, couple[1].firstName];
   const place = [data.city, data.region].filter(Boolean).join(", ") || undefined;
+  const dateLine = data.closing.date ?? ordinalDate(weddingDate, timeZone);
+  const coupleNames = `${firstNames[0]} & ${firstNames[1]}`;
 
-  // Each place lists the celebrations the schedule holds there.
-  const places: LocationEntry[] = data.locations.places.map((p) => ({
-    ...p,
-    occasions: data.schedule.days.flatMap((day) =>
-      day.events.filter((e) => e.venue === p.name).map((e) => ({ title: e.title, date: day.date })),
-    ),
-  }));
+  // "Add to Calendar": the wedding's start time on the wedding day, as one UTC instant.
+  const { calendar: calendarData, ...saveTheDate } = data.saveTheDate;
+  const fullCouple = couple.map(fullName).join(" & ");
+  const calendar = {
+    label: calendarData.label,
+    title: `${fullCouple} — ${calendarData.eventName}`,
+    description: `The wedding of ${fullCouple}.\n${dateLine}, ${clockTime(weddingDate, timeZone, calendarData.startTime)}`,
+    start: zonedTime(weddingDate, timeZone, calendarData.startTime),
+    uid: `wedding-${weddingDate}-${calendarData.startTime.replace(":", "")}@vm-invite`,
+    fileName: `${firstNames.join("-")}-${calendarData.eventName}`.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+  };
+
+  const people = couple.map((p) => ({
+    name: fullName(p),
+    lead: p.parents?.lead,
+    parents: p.parents?.names.join(" & "),
+  })) as [HeroPerson, HeroPerson];
 
   return (
     <main>
       <InvitationExperience
-        names={[fullName(couple[0]), fullName(couple[1])]}
+        intro={data.hero.intro}
+        people={people}
         shortNames={firstNames}
         place={place}
+        logo={data.brand?.logo}
         musicSrc={data.music?.src}
       />
 
-      <Invitation {...data.invitation} place={place} />
-
       <SaveTheDate
-        {...data.saveTheDate}
-        couple={firstNames.join(" & ")}
+        {...saveTheDate}
+        couple={fullCouple}
         date={weddingDateParts(weddingDate, timeZone)}
+        dateLine={dateLine}
         target={zonedTime(weddingDate, timeZone)}
+        calendar={calendar}
       />
+
+      {data.groom.parents && <Blessings {...data.family} parents={data.groom.parents} />}
 
       <Schedule {...data.schedule} />
 
-      <Locations {...data.locations} places={places} />
+      <Locations {...data.locations} />
+
+      <Rsvp
+        {...data.rsvp}
+        subject={`RSVP — ${coupleNames}`}
+        replyText={`Namaste! We would be delighted to join the wedding celebrations of ${coupleNames} on ${dateLine}.
+
+Name:
+Number of guests:`}
+      />
 
       <Closing
         heading={data.closing.heading}
         names={firstNames}
-        date={data.closing.date ?? ordinalDate(weddingDate, timeZone)}
+        date={dateLine}
         hashtag={data.closing.hashtag}
         photo={data.closing.photo}
+        logo={data.brand?.logo}
       />
     </main>
   );

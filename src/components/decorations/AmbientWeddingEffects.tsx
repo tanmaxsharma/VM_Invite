@@ -54,6 +54,52 @@ function Shape({ kind, size }: { kind: Kind; size: number }) {
 }
 
 /**
+ * The drifting petals themselves. Fills the nearest positioned parent; give that parent
+ * `overflow-hidden`. `--petal-fall` (default one viewport height) sets how far they travel.
+ */
+export function PetalField({ count = ELEMENTS.length }: { count?: number }) {
+  return (
+    <>
+      {ELEMENTS.slice(0, count).map(([left, size, fall, delay, driftVw, flutter, kind], i) => (
+        <span
+          key={i}
+          className={`absolute -top-6 ${i >= MOBILE_COUNT ? "max-md:hidden" : ""}`}
+          style={
+            {
+              left: `${left}%`,
+              "--petal-drift": `${driftVw}vw`,
+              animation: `petal-fall ${fall}s linear -${delay}s infinite`,
+            } as CSSProperties
+          }
+        >
+          <span
+            className="block"
+            style={{ animation: `petal-flutter ${flutter}s ease-in-out -${delay % flutter}s infinite` }}
+          >
+            <Shape kind={kind} size={size} />
+          </span>
+        </span>
+      ))}
+    </>
+  );
+}
+
+/**
+ * A short fall of petals for a single section (e.g. one with an opaque background that
+ * would hide the page-wide layer). Hidden for reduced motion.
+ */
+export function SectionPetals({ count = 6 }: { count?: number }) {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 -z-0 overflow-hidden select-none [container-type:size] [--petal-fall:108cqh] motion-reduce:hidden"
+    >
+      <PetalField count={count} />
+    </div>
+  );
+}
+
+/**
  * The atmosphere after the invitation opens: a sparse fall of petals, specks
  * and leaves, and an occasional butterfly. One fixed, click-through layer that
  * sits behind all content, so it never covers the scratch card or any control.
@@ -79,26 +125,7 @@ export function AmbientWeddingEffects() {
       className="pointer-events-none fixed inset-0 z-0 animate-[ambient-in_3s_ease-out_both] overflow-hidden select-none"
     >
       <div ref={drift} className="absolute inset-0">
-        {ELEMENTS.map(([left, size, fall, delay, driftVw, flutter, kind], i) => (
-          <span
-            key={i}
-            className={`absolute -top-6 ${i >= MOBILE_COUNT ? "max-md:hidden" : ""}`}
-            style={
-              {
-                left: `${left}%`,
-                "--petal-drift": `${driftVw}vw`,
-                animation: `petal-fall ${fall}s linear -${delay}s infinite`,
-              } as CSSProperties
-            }
-          >
-            <span
-              className="block"
-              style={{ animation: `petal-flutter ${flutter}s ease-in-out -${delay % flutter}s infinite` }}
-            >
-              <Shape kind={kind} size={size} />
-            </span>
-          </span>
-        ))}
+        <PetalField />
       </div>
       <Butterfly />
     </div>

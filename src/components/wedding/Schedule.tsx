@@ -174,7 +174,7 @@ export function Schedule({ heading, intro, days }: ScheduleProps) {
       ref={root}
       id="celebrations"
       aria-labelledby="schedule-heading"
-      className="relative overflow-x-clip px-gutter pb-section"
+      className="relative overflow-x-clip px-gutter pt-[calc(var(--spacing-section)*0.8)] pb-section"
     >
       <header className="text-center">
         <h2 id="schedule-heading" className="type-heading uppercase tracking-[0.12em] text-maroon-500">

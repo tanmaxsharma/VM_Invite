@@ -106,7 +106,7 @@
    Transform/opacity only, so everything stays on the compositor. */
 @keyframes petal-fall {
   from { transform: translate3d(0, -8vh, 0) rotate(0deg); }
-  to { transform: translate3d(var(--petal-drift, 0), 108vh, 0) rotate(260deg); }
+  to { transform: translate3d(var(--petal-drift, 0), var(--petal-fall, 108vh), 0) rotate(260deg); }
 }
 
 /* sway + tilt + a turn of the petal (scaleX) so it seems to tumble in the air */
@@ -199,6 +199,11 @@
   }
 }
 
+/* Reserve the scrollbar's width so locking the page (the date gate) never shifts the layout. */
+html {
+  scrollbar-gutter: stable;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -281,4 +286,29 @@
   border: 1px solid var(--color-line);
   outline: 1px solid color-mix(in oklab, var(--color-gold-500) 25%, transparent);
   outline-offset: -7px;
+}
+
+/* Scalloped edges — a row of small arches where a maroon page meets the parchment. */
+@utility scallop-top {
+  &::before {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: -13px;
+    height: 14px;
+    background: radial-gradient(circle 14px at 50% 100%, var(--scallop, var(--color-maroon-700)) 98%, transparent 100%) 0 0 / 28px 14px repeat-x;
+    pointer-events: none;
+  }
+}
+
+@utility scallop-bottom {
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: -13px;
+    height: 14px;
+    background: radial-gradient(circle 14px at 50% 0%, var(--scallop, var(--color-maroon-700)) 98%, transparent 100%) 0 0 / 28px 14px repeat-x;
+    pointer-events: none;
+  }
 }

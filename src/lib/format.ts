@@ -43,6 +43,13 @@ export function weddingDateParts(date: string, timeZone: string) {
   return { weekday: parts.weekday, day: parts.day, month: parts.month, year: parts.year };
 }
 
+/** "7:00 PM IST" */
+export function clockTime(date: string, timeZone: string, time: string) {
+  return formatter(timeZone, { hour: "numeric", minute: "2-digit", hour12: true, timeZoneName: "short" })
+    .format(zonedTime(date, timeZone, time))
+    .replace(/\b[ap]m\b/i, (m) => m.toUpperCase());
+}
+
 const SUFFIX: Record<Intl.LDMLPluralRule, string> = { one: "st", two: "nd", few: "rd", other: "th", zero: "th", many: "th" };
 
 /** "15th November 2026" */

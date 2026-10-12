@@ -3,9 +3,35 @@
  * Templates read from this shape; they never hard-code couple-specific content.
  */
 
+export type Parents = {
+  /** e.g. "Son of" / "Daughter of" */
+  lead: string;
+  /** Shown joined with "&", in this order */
+  names: [string, string];
+};
+
 export type Person = {
   firstName: string;
   lastName?: string;
+  parents?: Parents;
+};
+
+/** An image shown at its natural proportions (never cropped). */
+export type Artwork = {
+  /** Path under /public */
+  src: string;
+  alt: string;
+  /** Intrinsic pixel size, used for the layout ratio and optimisation */
+  width: number;
+  height: number;
+};
+
+export type Photo = {
+  /** Path under /public */
+  src: string;
+  alt: string;
+  /** CSS object-position, used to keep faces in frame, e.g. "50% 30%" */
+  focus?: string;
 };
 
 /** Selects the artwork and palette of an event card */
@@ -16,7 +42,6 @@ export type ScheduleEvent = {
   time?: string;
   title: string;
   motif: EventMotif;
-  /** Must match a `locations.places[].name` to be listed under that place */
   venue: string;
 };
 
@@ -27,31 +52,17 @@ export type ScheduleDay = {
   events: ScheduleEvent[];
 };
 
-export type Place = {
-  name: string;
-  /** Leave empty until the real address is known */
-  address?: string;
-  /** Leave empty until a real link exists; "Get directions" only shows with one */
-  mapsUrl?: string;
-};
-
 export type MapLocation = {
   /** Venue shown above the map, e.g. "Gyan Ganga College Ground" */
   name: string;
+  /** Small line above the venue name, e.g. "The Reception" */
+  caption?: string;
   /** Optional line under the name */
   address?: string;
   /** Google Maps "Embed a map" src (https://www.google.com/maps/embed?pb=…). Empty → no map is shown. */
   embedUrl: string;
   /** Google Maps share link. Empty → no "Get directions" button. */
   directionsUrl?: string;
-};
-
-export type Photo = {
-  /** Path under /public */
-  src: string;
-  alt: string;
-  /** CSS object-position, used to keep faces in frame, e.g. "50% 30%" */
-  focus?: string;
 };
 
 export type WeddingData = {
@@ -67,28 +78,46 @@ export type WeddingData = {
   city?: string;
   /** Optional line after the city, e.g. the state */
   region?: string;
+  /** The couple's own emblem — shown on the wax seal and, small, in the closing. Used exactly as supplied. */
+  brand?: {
+    logo: Artwork;
+  };
   /** Background music, played only after the guest opens the invitation */
   music?: {
     /** Path under /public, e.g. "/audio/wedding.mp3" */
     src: string;
   };
-  invitation: {
-    /** Opening blessing, e.g. "Shri Ganeshaya Namah" */
-    invocation?: string;
-    /** Two-line heading; the second line is set in italics */
-    heading: [string, string];
-    /** Each item renders on its own line */
-    message: string[];
+  hero: {
+    /** The short line above the couple's names */
+    intro: string;
+  };
+  /** Traditional blessing hierarchy — the elders, then the son's parents */
+  family: {
+    heading: string;
+    /** Introduces the living grandfather, e.g. "Seeking the blessings of" */
+    blessingLead: string;
+    grandfather: string;
+    /** Introduces the grandmother who has passed, e.g. "and in loving memory of" */
+    memoryLead: string;
+    grandmother: string;
   };
   saveTheDate: {
-    /** Shown on the scratch surface */
-    teaser: string;
-    /** Instruction under the teaser */
-    hint: string;
-    /** Line above the countdown */
-    countdownLabel: string;
+    /** Under the heading, above the three scratch cards */
+    instruction: string;
+    /** Printed on the scratch surfaces */
+    labels: { month: string; day: string; year: string };
     /** Replaces the countdown once the day arrives */
     completeMessage: string;
+    /** Shown once the gate opens */
+    continueLabel: string;
+    /** The "Add to Calendar" button under the countdown (downloads an .ics file) */
+    calendar: {
+      label: string;
+      /** When the wedding starts on `weddingDate`, 24-hour "HH:mm" in `timeZone`. No end time is written. */
+      startTime: string;
+      /** The event is titled "<couple> — <eventName>" */
+      eventName: string;
+    };
   };
   schedule: {
     heading: string;
@@ -98,11 +127,22 @@ export type WeddingData = {
   };
   locations: {
     heading: string;
-    intro?: string;
-    /** In the order they should appear */
-    places: Place[];
-    /** The one map shown under the list of places */
+    /** The map shown in this section */
     map: MapLocation;
+  };
+  /** The reply to the hosts. Wire it up with `url`, or `contact`; with neither, guests choose a WhatsApp chat to send to. */
+  rsvp: {
+    heading: string;
+    message: string;
+    button: string;
+    /** A form or link to open instead (takes priority) */
+    url?: string;
+    /** Where the reply message is sent */
+    contact?: {
+      /** International format without "+", e.g. "919876543210" */
+      whatsapp?: string;
+      email?: string;
+    };
   };
   closing: {
     heading: string;

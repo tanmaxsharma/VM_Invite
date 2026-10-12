@@ -43,11 +43,13 @@ export function Countdown({ target, completeMessage }: CountdownProps) {
   }
 
   return (
-    <dl className="grid grid-cols-4">
+    <dl className="mx-auto grid max-w-[22rem] grid-cols-4 md:max-w-[28rem]">
       {split(remaining ?? 0).map(([label, value], i) => (
-        <div key={label} className={`flex flex-col-reverse items-center ${i > 0 ? "border-l border-line" : ""}`}>
-          <dt className="type-meta mt-2 text-[0.625rem]! text-gold-700 md:text-xs!">{label}</dt>
-          <dd className="type-names not-italic! tabular-nums text-maroon-500">
+        <div key={label} className={`flex flex-col-reverse items-center gap-2 ${i > 0 ? "border-l border-gold-500/35" : ""}`}>
+          {/* tracked a little tighter than other labels so "SECONDS" fits its column at 320px */}
+          <dt className="type-meta pl-[0.14em] text-[0.625rem]! tracking-[0.14em]! text-gold-700 md:text-[0.6875rem]! md:tracking-[0.2em]! md:pl-[0.2em]">{label}</dt>
+          {/* clean lining figures — calm and readable, not a clock face */}
+          <dd className="font-display text-[clamp(1.75rem,8vw,2.375rem)] leading-none font-medium text-maroon-500 lining-nums tabular-nums">
             {remaining === null ? "–" : i === 0 ? value : String(value).padStart(2, "0")}
           </dd>
         </div>

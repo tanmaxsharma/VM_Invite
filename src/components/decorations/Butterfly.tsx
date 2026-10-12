@@ -18,6 +18,7 @@ export function Butterfly() {
     const el = root.current!;
     const random = gsap.utils.random;
     let flight = 0;
+    const narrow = window.matchMedia("(max-width: 767px)").matches;
 
     const fly = () =>
       self.add(() => {
@@ -41,7 +42,8 @@ export function Butterfly() {
         gsap.set(el, { x: x0, y: y0, rotation: heading, autoAlpha: 0 });
         const duration = random(15, 21);
         gsap
-          .timeline({ onComplete: () => self.add(() => gsap.delayedCall(random(10, 20), fly)) })
+          // rests longer between visits on a phone, where it would otherwise crowd the screen
+          .timeline({ onComplete: () => self.add(() => gsap.delayedCall(narrow ? random(22, 38) : random(10, 20), fly)) })
           .to(el, { autoAlpha: random(0.5, 0.68), duration: 1.6, ease: "sine.out" }, 0)
           .to(
             el,
@@ -60,7 +62,7 @@ export function Butterfly() {
           .to(el, { autoAlpha: 0, duration: 1.6, ease: "sine.in" }, duration - 1.6);
       });
 
-    gsap.delayedCall(random(4, 8), fly);
+    gsap.delayedCall(narrow ? random(8, 14) : random(4, 8), fly);
   }, root);
 
   return (

@@ -1,36 +1,38 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState, type PointerEvent, type ReactNode } from "react";
-import { gsap } from "@/lib/gsap";
+import { gsap, prefersReducedMotion } from "@/lib/gsap";
+import { ease } from "@/lib/motion";
 
 type ScratchCardProps = {
   /** Hidden content, revealed by scratching */
   children: ReactNode;
-  teaser: string;
-  hint: string;
-  /** Share of the surface (0–1) that must be cleared before it auto-reveals */
+  /** Printed on the scratch surface, e.g. "Month" */
+  label: string;
+  /** Share of the surface (0–1) that must be scratched before the rest dissolves. A few natural strokes is enough. */
   threshold?: number;
   onReveal: () => void;
-  /** Label for the keyboard / screen-reader alternative */
-  revealLabel?: string;
+  /** Reveals the card from outside (e.g. a single keyboard-accessible "reveal" button) */
+  forceReveal?: boolean;
   className?: string;
 };
 
 /** Sample every Nth pixel when measuring progress — plenty accurate, far cheaper. */
 const SAMPLE_STRIDE = 8;
-const CHECK_INTERVAL_MS = 200;
+const CHECK_INTERVAL_MS = 90;
 
 export function ScratchCard({
   children,
-  teaser,
-  hint,
-  threshold = 0.6,
+  label,
+  threshold = 0.22,
   onReveal,
-  revealLabel = "Reveal",
+  forceReveal = false,
   className = "",
 }: ScratchCardProps) {
   const box = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const faceRef = useRef<HTMLDivElement>(null);
+  const sheenRef = useRef<HTMLSpanElement>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
   const last = useRef<{ x: number; y: number } | null>(null);
   const lastCheck = useRef(0);
@@ -56,30 +58,43 @@ export function ScratchCard({
       canvas.height = Math.round(h * dpr);
       const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      paintCover(ctx, w, h, getComputedStyle(el), teaser, hint);
+      paintCover(ctx, w, h, getComputedStyle(el), label);
       ctxRef.current = ctx;
       setReady(true);
     };
 
     paint();
-    // Repaint once web fonts are ready so the teaser uses Cormorant, not a fallback.
+    // Repaint once web fonts are ready so the label uses Jost, not a fallback.
     document.fonts?.ready.then(() => paint(true));
     const observer = new ResizeObserver(() => paint());
     observer.observe(el);
     return () => observer.disconnect();
-  }, [teaser, hint]);
+  }, [label]);
 
   const reveal = useCallback(() => {
     if (done.current) return;
     done.current = true;
     onReveal();
+    // The rest of the cover dissolves as the value settles into place, with a soft gold glint.
     gsap.to(canvasRef.current, {
       autoAlpha: 0,
-      duration: 0.9,
+      duration: 0.75,
       ease: "power2.out",
       onComplete: () => setRevealed(true),
     });
+    if (!prefersReducedMotion()) {
+      gsap.fromTo(faceRef.current, { scale: 0.93 }, { scale: 1, duration: 1, ease: ease.cinematicGsap });
+      gsap.fromTo(
+        sheenRef.current,
+        { xPercent: -130, autoAlpha: 1 },
+        { xPercent: 130, duration: 0.95, ease: "power2.inOut", onComplete: () => void gsap.set(sheenRef.current, { autoAlpha: 0 }) },
+      );
+    }
   }, [onReveal]);
+
+  useEffect(() => {
+    if (forceReveal) reveal();
+  }, [forceReveal, reveal]);
 
   const measure = () => {
     const canvas = canvasRef.current;
@@ -102,7 +117,7 @@ export function ScratchCard({
     ctx.globalCompositeOperation = "destination-out";
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-    ctx.lineWidth = Math.max(34, box.current!.clientWidth * 0.13);
+    ctx.lineWidth = Math.max(26, Math.min(42, box.current!.clientWidth * 0.28));
     ctx.beginPath();
     ctx.moveTo(from.x, from.y);
     ctx.lineTo(to.x + 0.01, to.y);
@@ -147,30 +162,29 @@ export function ScratchCard({
   return (
     <div ref={box} className={`relative isolate overflow-hidden ${className}`}>
       {/* Hidden until the cover is painted, so the answer never flashes. */}
-      <div className={ready || revealed ? "" : "invisible"} aria-hidden={!revealed}>
+      <div ref={faceRef} className={`h-full ${ready || revealed ? "" : "invisible"}`} aria-hidden={!revealed}>
         {children}
       </div>
+      <span
+        ref={sheenRef}
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-0"
+        style={{
+          background: "linear-gradient(105deg, transparent 38%, rgb(216 192 138 / 0.65) 50%, transparent 62%)",
+        }}
+      />
 
       {!revealed && (
-        <>
-          <canvas
-            ref={canvasRef}
-            data-lenis-prevent
-            aria-hidden
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
-            onPointerCancel={onPointerUp}
-            className="absolute inset-0 size-full cursor-grab touch-none select-none active:cursor-grabbing"
-          />
-          <button
-            type="button"
-            onClick={reveal}
-            className="type-meta sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:bottom-3 focus-visible:left-1/2 focus-visible:-translate-x-1/2 focus-visible:text-parchment-50"
-          >
-            {revealLabel}
-          </button>
-        </>
+        <canvas
+          ref={canvasRef}
+          data-lenis-prevent
+          aria-hidden
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+          className="absolute inset-0 size-full cursor-grab touch-none select-none active:cursor-grabbing"
+        />
       )}
     </div>
   );
@@ -183,8 +197,7 @@ function paintCover(
   w: number,
   h: number,
   style: CSSStyleDeclaration,
-  teaser: string,
-  hint: string,
+  label: string,
 ) {
   const token = (name: string) => style.getPropertyValue(name).trim();
   const color = (name: string) => token(`--color-${name}`);
@@ -199,8 +212,8 @@ function paintCover(
   ctx.fillStyle = base;
   ctx.fillRect(0, 0, w, h);
 
-  const sheen = ctx.createRadialGradient(w * 0.3, h * 0.2, 0, w * 0.3, h * 0.2, Math.max(w, h) * 0.8);
-  sheen.addColorStop(0, "rgb(255 240 210 / 0.14)");
+  const sheen = ctx.createRadialGradient(w * 0.3, h * 0.18, 0, w * 0.3, h * 0.18, Math.max(w, h) * 0.9);
+  sheen.addColorStop(0, "rgb(255 240 210 / 0.16)");
   sheen.addColorStop(1, "rgb(255 240 210 / 0)");
   ctx.fillStyle = sheen;
   ctx.fillRect(0, 0, w, h);
@@ -208,9 +221,9 @@ function paintCover(
   // Jaali lattice in faint gold.
   ctx.save();
   ctx.strokeStyle = color("gold-300");
-  ctx.globalAlpha = 0.13;
-  ctx.lineWidth = 0.75;
-  const step = 20;
+  ctx.globalAlpha = 0.14;
+  ctx.lineWidth = 0.7;
+  const step = Math.max(12, Math.round(w / 6));
   ctx.beginPath();
   for (let k = -h; k < w + h; k += step) {
     ctx.moveTo(k, 0);
@@ -233,40 +246,63 @@ function paintCover(
   }
   g.putImageData(noise, 0, 0);
   ctx.save();
-  ctx.globalAlpha = 0.07;
+  ctx.globalAlpha = 0.08;
   ctx.fillStyle = ctx.createPattern(grain, "repeat")!;
   ctx.fillRect(0, 0, w, h);
   ctx.restore();
 
-  // Double gold hairline border.
+  // Gold-foil border: a bright outer hairline and a softer inner one.
+  const foil = ctx.createLinearGradient(0, 0, w, h);
+  foil.addColorStop(0, color("gold-300"));
+  foil.addColorStop(0.5, color("gold-500"));
+  foil.addColorStop(1, color("gold-300"));
   ctx.save();
-  ctx.strokeStyle = color("gold-300");
-  ctx.lineWidth = 1;
-  ctx.globalAlpha = 0.7;
+  ctx.strokeStyle = foil;
+  ctx.lineWidth = 1.25;
+  ctx.globalAlpha = 0.85;
+  ctx.strokeRect(5.5, 5.5, w - 11, h - 11);
+  ctx.lineWidth = 0.75;
+  ctx.globalAlpha = 0.4;
   ctx.strokeRect(9.5, 9.5, w - 19, h - 19);
-  ctx.globalAlpha = 0.35;
-  ctx.strokeRect(14.5, 14.5, w - 29, h - 29);
   ctx.restore();
 
-  // Teaser, a small ornament and the hint.
+  // Small diamonds at the corners.
+  ctx.fillStyle = color("gold-300");
+  for (const [x, y] of [[5.5, 5.5], [w - 5.5, 5.5], [5.5, h - 5.5], [w - 5.5, h - 5.5]]) diamond(ctx, x, y, 2.6);
+
+  // A tiny mandala medallion above the label.
   const cx = w / 2;
-  const cy = h / 2;
+  const cy = h / 2 - 8;
+  const r = Math.min(w * 0.17, 15);
+  ctx.save();
+  ctx.strokeStyle = color("gold-300");
+  ctx.globalAlpha = 0.9;
+  ctx.lineWidth = 0.9;
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx, cy, r * 0.55, 0, Math.PI * 2);
+  ctx.stroke();
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(a) * r * 0.55, cy + Math.sin(a) * r * 0.55);
+    ctx.lineTo(cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+    ctx.stroke();
+  }
+  ctx.restore();
+  ctx.fillStyle = color("gold-300");
+  ctx.beginPath();
+  ctx.arc(cx, cy, 1.5, 0, Math.PI * 2);
+  ctx.fill();
+
+  // The label, set in spaced capitals.
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-
-  ctx.fillStyle = color("gold-300");
-  diamond(ctx, cx, cy - 34, 3.5);
-  ctx.fillRect(cx - 34, cy - 34.5, 24, 1);
-  ctx.fillRect(cx + 10, cy - 34.5, 24, 1);
-
-  const teaserSize = Math.round(Math.min(Math.max(w * 0.08, 20), 28));
   ctx.fillStyle = color("parchment-50");
-  ctx.font = `italic 400 ${teaserSize}px ${token("--font-display")}`;
-  ctx.fillText(teaser, cx, cy, w - 48);
-
-  ctx.fillStyle = color("gold-300");
-  ctx.font = `500 11px ${token("--font-sans")}`;
-  spacedText(ctx, hint.toUpperCase(), cx, cy + teaserSize + 6, 3);
+  ctx.font = `500 ${w < 110 ? 10 : 11}px ${token("--font-sans")}`;
+  spacedText(ctx, label.toUpperCase(), cx, cy + r + 15, w < 110 ? 2.4 : 3);
 }
 
 function diamond(ctx: CanvasRenderingContext2D, x: number, y: number, r: number) {

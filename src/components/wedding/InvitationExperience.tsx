@@ -6,16 +6,21 @@ import { useBackgroundMusic } from "@/lib/useBackgroundMusic";
 import { MusicControl } from "@/components/ui/MusicControl";
 import { AmbientWeddingEffects } from "@/components/decorations/AmbientWeddingEffects";
 import { OpeningScene } from "./OpeningScene";
-import { Hero } from "./Hero";
+import type { Artwork } from "@/data/types";
+import { Hero, type HeroProps } from "./Hero";
 
 type Stage = "sealed" | "revealing" | "open";
 
 type InvitationExperienceProps = {
-  /** Full names for the hero, in display order */
-  names: [string, string];
-  /** First names for the envelope, card and seal, in display order */
+  /** The line above the couple's names */
+  intro: string;
+  /** The couple with their parents, in display order — for the hero */
+  people: HeroProps["people"];
+  /** First names for the envelope and card, in display order */
   shortNames: [string, string];
   place?: string;
+  /** The couple's emblem for the wax seal */
+  logo?: Artwork;
   musicSrc?: string;
 };
 
@@ -24,7 +29,7 @@ type InvitationExperienceProps = {
  * Scrolling stays locked until the invitation has been opened and the
  * opening scene has fully dissolved.
  */
-export function InvitationExperience({ names, shortNames, place, musicSrc }: InvitationExperienceProps) {
+export function InvitationExperience({ intro, people, shortNames, place, logo, musicSrc }: InvitationExperienceProps) {
   const [stage, setStage] = useState<Stage>("sealed");
   const lenis = useLenis();
   const music = useBackgroundMusic(musicSrc);
@@ -44,10 +49,11 @@ export function InvitationExperience({ names, shortNames, place, musicSrc }: Inv
     <>
       {/* Page-wide atmosphere, only once the invitation is open. Rendered first so all content paints above it. */}
       {stage === "open" && <AmbientWeddingEffects />}
-      <Hero names={names} place={place} play={stage !== "sealed"} inert={stage === "sealed"} />
+      <Hero intro={intro} people={people} place={place} play={stage !== "sealed"} inert={stage === "sealed"} />
       {stage !== "open" && (
         <OpeningScene
           names={shortNames}
+          logo={logo}
           onOpen={music.play}
           onReveal={() => setStage("revealing")}
           onComplete={() => setStage("open")}
