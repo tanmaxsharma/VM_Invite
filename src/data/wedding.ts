@@ -43,25 +43,43 @@ export const wedding = {
     grandmother: "Late Smt. Malti Jain",
   },
   saveTheDate: {
-    instruction: "Scratch below to reveal our wedding date",
+    instruction: "Tap below to reveal our wedding date",
+    hint: "Tap each card to reveal",
     labels: { month: "Month", day: "Day", year: "Year" },
     completeMessage: "Today, we celebrate",
     continueLabel: "Scroll to continue",
     // The wedding itself, 6:00–11:00 PM IST on the wedding day.
     calendar: { label: "Add to Calendar", start: "2026-11-15T18:00", end: "2026-11-15T23:00", eventName: "Wedding" },
   },
-  // Every time is IST (`timeZone` above). An event with no `end` is open-ended: none is shown or invented.
+  // Every time is IST (`timeZone` above). `start` / `end` are what each card prints; an event with
+  // no `end` is open-ended there. `calendar`, where present, is what is saved to a guest's calendar
+  // instead — it never changes the card. Events without it use `start` / `end` for both. An event
+  // with no calendar end (Barat) is saved with a start only; none is invented.
   schedule: {
     heading: "Wedding Celebrations",
     intro: "Three days of rituals, celebrations and togetherness",
     events: [
-      { title: "Haldi", motif: "haldi", venue: "Home", start: "2026-11-14T12:00" },
+      {
+        title: "Haldi", motif: "haldi", venue: "Home", start: "2026-11-14T12:00",
+        calendar: { start: "2026-11-14T12:00", end: "2026-11-14T16:00" },
+      },
       { title: "Sangeet", motif: "sangeet", venue: "Welcome Hotel by ITC", start: "2026-11-14T20:00", end: "2026-11-14T23:00" },
-      { title: "Reception", motif: "reception", venue: receptionVenue, start: "2026-11-15T19:00", end: "2026-11-15T23:00" },
-      // crosses midnight: it ends on the 16th
-      { title: "Barat", motif: "barat", venue: "Welcome Hotel by ITC", start: "2026-11-15T23:00" },
+      {
+        title: "Reception", motif: "reception", venue: receptionVenue, start: "2026-11-15T19:00", end: "2026-11-15T23:00",
+        // runs past midnight: it ends on the 16th
+        calendar: { start: "2026-11-15T23:00", end: "2026-11-16T01:00" },
+      },
+      {
+        title: "Barat", motif: "barat", venue: "Welcome Hotel by ITC", start: "2026-11-15T23:00",
+        // one overnight event: midnight moves the date to the 16th, it ends 12:30 AM there
+        calendar: { start: "2026-11-15T23:00", end: "2026-11-16T00:30" },
+      },
       { title: "Rituals", motif: "rituals", venue: "Home", start: "2026-11-16T13:00", end: "2026-11-16T16:00" },
-      { title: "Afterparty", motif: "afterparty", venue: "Riverside Burrows", start: "2026-11-16T20:00" },
+      {
+        title: "Afterparty", motif: "afterparty", venue: "Riverside Burrows", start: "2026-11-16T20:00",
+        // runs past midnight: it ends on the 17th
+        calendar: { start: "2026-11-16T20:00", end: "2026-11-17T00:00" },
+      },
     ],
   },
   locations: {
@@ -79,12 +97,14 @@ export const wedding = {
       directionsUrl: "https://www.google.com/maps?cid=17875776434541365863",
     },
   },
-  // RSVP opens a ready-written reply. Set `rsvp.contact.whatsapp` (e.g. "919876543210") or
-  // `rsvp.contact.email` to send it straight to the hosts, or `rsvp.url` to open a form instead.
+  // RSVP opens WhatsApp with a ready-written reply to this number (international format, digits
+  // only). The guest reads it, fills in the blanks and presses Send. To use a form instead, set
+  // `rsvp.url`; to use email, replace `whatsapp` with `email`.
   rsvp: {
     heading: "RSVP",
-    message: "We would be delighted to celebrate with you.",
+    message: "Please inform us if you'd like to join us by clicking on the tab.",
     button: "RSVP",
+    contact: { whatsapp: "919406525259" },
   },
   closing: {
     heading: "With Love",

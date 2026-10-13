@@ -26,8 +26,9 @@ export function WeddingTemplate({ data }: { data: WeddingData }) {
   const dateLine = data.closing.date ?? ordinalDate(weddingDate, timeZone);
   const coupleNames = `${firstNames[0]} & ${firstNames[1]}`;
 
-  // Calendar entries. The main one and every card's are built from the same start and end that the
-  // cards print, in the wedding's time zone, so what a guest reads and what they save cannot differ.
+  // Calendar entries, built in the wedding's time zone. Each event's entry uses its `calendar` timing
+  // where it has one, otherwise the same start and end its card prints. The cards always print
+  // `start` / `end`, whatever the calendar entry says.
   const { calendar: main, ...saveTheDate } = data.saveTheDate;
   const fullCouple = couple.map(fullName).join(" & ");
   const coupleAnd = couple.map(fullName).join(" and ");
@@ -51,24 +52,38 @@ export function WeddingTemplate({ data }: { data: WeddingData }) {
     timeZone,
   });
 
-  const events = data.schedule.events.map((e) => ({
-    title: e.title,
-    motif: e.motif,
-    venue: e.venue,
-    date: eventDateLabel(e.start, e.end, timeZone),
-    time: eventTimeLabel(e.start, e.end, timeZone),
-    calendar: calendarAction({
-      label: main.label,
-      subject: e.title,
-      ...calendarIds(e.title, e.start),
-      title: `${e.title} — ${weddingTitle}`,
-      description: `${e.title}, part of the wedding celebrations of ${coupleAnd}.`,
-      location: e.venue,
-      start: e.start,
-      end: e.end,
-      timeZone,
-    }),
-  }));
+  const events = data.schedule.events.map((e) => {
+    const when = e.calendar ?? e;
+    return {
+      title: e.title,
+      motif: e.motif,
+      venue: e.venue,
+      date: eventDateLabel(e.start, e.end, timeZone),
+      time: eventTimeLabel(e.start, e.end, timeZone),
+      calendar: calendarAction({
+        label: main.label,
+        subject: e.title,
+        ...calendarIds(e.title, when.start),
+        title: `${e.title} — ${weddingTitle}`,
+        description: `${e.title}, part of the wedding celebrations of ${coupleAnd}.`,
+        location: e.venue,
+        start: when.start,
+        end: when.end,
+        timeZone,
+      }),
+    };
+  });
+
+  // The message a guest sends to RSVP: written out for them, with blanks to fill in.
+  const day = weddingDateParts(weddingDate, timeZone);
+  const replyText = [
+    `Hello, I would like to RSVP for the wedding of ${coupleAnd} on ${day.day} ${day.month} ${day.year}. Please find my response below.`,
+    "Name:",
+    "Number of guests attending:",
+    "Events attending:",
+    "Dietary preferences (if any):",
+    "Thank you.",
+  ].join("\n");
 
   const people = couple.map((p) => ({
     name: fullName(p),
@@ -102,14 +117,7 @@ export function WeddingTemplate({ data }: { data: WeddingData }) {
 
       <Locations {...data.locations} />
 
-      <Rsvp
-        {...data.rsvp}
-        subject={`RSVP — ${coupleNames}`}
-        replyText={`Namaste! We would be delighted to join the wedding celebrations of ${coupleNames} on ${dateLine}.
-
-Name:
-Number of guests:`}
-      />
+      <Rsvp {...data.rsvp} subject={`RSVP — ${coupleNames}`} replyText={replyText} />
 
       <Closing
         heading={data.closing.heading}

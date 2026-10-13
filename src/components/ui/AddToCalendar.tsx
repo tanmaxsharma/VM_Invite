@@ -37,9 +37,10 @@ type AddToCalendarProps = {
  * Adds one event to a guest's calendar.
  *
  * With an end time, the main button is a plain link that opens Google Calendar's "new event" page
- * already filled in (the guest only reviews and saves), and an .ics file is offered for Apple and
- * Outlook. Without an end time, Google's link would need an invented one, so the main button
- * downloads the .ics instead — it has a start and no end.
+ * already filled in (the guest reviews it and presses Save — a website cannot save into someone's
+ * calendar for them), and an .ics file is offered for Apple and Outlook. Without an end time,
+ * Google's link would need an invented one, so the button downloads an .ics instead — it has a
+ * start and no end.
  */
 export function AddToCalendar({ action, variant = "plate" }: AddToCalendarProps) {
   const { label, subject, fileName, googleUrl, event } = action;

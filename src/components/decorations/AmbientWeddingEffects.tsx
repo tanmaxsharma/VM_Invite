@@ -102,7 +102,7 @@ export function SectionPetals({ count = 6 }: { count?: number }) {
 /**
  * The atmosphere after the invitation opens: a sparse fall of petals, specks
  * and leaves, and an occasional butterfly. One fixed, click-through layer that
- * sits behind all content, so it never covers the scratch card or any control.
+ * sits behind all content, so it never covers the date cards or any control.
  * Rendered only once the invitation is open; absent for reduced motion.
  */
 export function AmbientWeddingEffects() {

@@ -127,6 +127,49 @@
   to { opacity: 1; }
 }
 
+/* Tap guidance (TapHand, and the rings on the date cards). A finger taps three times and then
+   rests, so it shows what to do without nagging. Everything is off under reduced motion. */
+@keyframes tap-press {
+  0%, 100% { transform: translateY(0); }
+  38%, 52% { transform: translateY(-7px); }
+}
+@keyframes tap-ripple {
+  0%, 34% { transform: scale(0.35); opacity: 0; }
+  44% { opacity: 0.8; }
+  100% { transform: scale(1.7); opacity: 0; }
+}
+@keyframes tap-ring {
+  0% { transform: scale(0.8); opacity: 0; }
+  30% { opacity: 0.7; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.tap-hand .tap-finger,
+.tap-hand .tap-ripple {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.tap-hand .tap-ripple,
+.tap-ring {
+  opacity: 0;
+}
+.tap-hand[data-play="true"] .tap-finger {
+  animation: tap-press 1.9s var(--ease-gentle) 1.5s 3 both;
+}
+.tap-hand[data-play="true"] .tap-ripple {
+  animation: tap-ripple 1.9s var(--ease-gentle) 1.5s 3 both;
+}
+[data-invite="true"] .tap-ring {
+  animation: tap-ring 2.2s var(--ease-gentle) 1.8s 3 both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tap-hand .tap-finger,
+  .tap-hand .tap-ripple,
+  .tap-ring {
+    animation: none !important;
+  }
+}
+
 :root {
   color-scheme: light;
 

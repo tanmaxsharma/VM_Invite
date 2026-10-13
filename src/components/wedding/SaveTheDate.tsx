@@ -6,7 +6,7 @@ import type Lenis from "lenis";
 import { gsap, prefersReducedMotion, useGsap } from "@/lib/gsap";
 import { ease } from "@/lib/motion";
 import { Mask } from "@/components/ui/Mask";
-import { ScratchCard } from "@/components/ui/ScratchCard";
+import { RevealCard } from "@/components/ui/RevealCard";
 import { Countdown } from "@/components/ui/Countdown";
 import { AddToCalendar } from "@/components/ui/AddToCalendar";
 import type { CalendarAction } from "@/lib/calendar";
@@ -15,9 +15,11 @@ import { Mandala } from "@/components/decorations/Mandala";
 import { OrnamentDivider } from "@/components/decorations/OrnamentDivider";
 import { Celebration } from "@/components/decorations/Celebration";
 import { FloralSpray } from "@/components/decorations/FloralSpray";
+import { TapHand } from "@/components/decorations/TapHand";
+import { useInViewOnce } from "@/lib/useInViewOnce";
 
 type SaveTheDateProps = {
-  /** e.g. "Vishesh Jain & Mahak Jain" */
+  /** e.g. "Vishesh Jain & Mehak Jain" */
   couple: string;
   date: { weekday: string; day: string; month: string; year: string };
   /** e.g. "15th November 2026" — shown above the countdown */
@@ -25,6 +27,8 @@ type SaveTheDateProps = {
   /** UTC timestamp (ms) of the start of the wedding day in its time zone */
   target: number;
   instruction: string;
+  /** The short line beside the tapping hand, e.g. "Tap each card to reveal" */
+  hint: string;
   labels: { month: string; day: string; year: string };
   completeMessage: string;
   continueLabel: string;
@@ -35,22 +39,22 @@ type SaveTheDateProps = {
 const CARDS = 3;
 const corner = "absolute w-12 text-gold-500 md:w-16";
 
-/** Hidden date, set on parchment inside a gold hairline. `size` is a fraction of the card's width. */
+/** The back of a card: the date, set on parchment inside a gold hairline. `size` is a fraction of the card's width. */
 function DateFace({ children, size }: { children: string; size: number }) {
   return (
-    <div data-std="face" className="frame grid h-full place-items-center rounded-[10px] bg-parchment-50">
+    <span data-std="face" className="frame grid size-full place-items-center rounded-[10px] bg-parchment-50">
       <span
         className="type-display block text-maroon-500"
         style={{ fontSize: `${size}cqw`, lineHeight: 1, letterSpacing: "0.02em", fontWeight: 400 } as CSSProperties}
       >
         {children}
       </span>
-    </div>
+    </span>
   );
 }
 
 /**
- * The date gate. The page stops here until all three cards have been scratched:
+ * The date gate. The page stops here until all three cards have been tapped:
  * month, day, year → celebration → countdown → the page is released.
  */
 export function SaveTheDate({
@@ -59,6 +63,7 @@ export function SaveTheDate({
   dateLine,
   target,
   instruction,
+  hint,
   labels,
   completeMessage,
   continueLabel,
@@ -71,15 +76,20 @@ export function SaveTheDate({
   /** armed → (page reaches the gate) → locked → (date revealed) → open */
   const phase = useRef<"armed" | "locking" | "locked" | "open">("armed");
   const [revealedCount, setRevealedCount] = useState(0);
-  const [forceReveal, setForceReveal] = useState(false);
+  const [tapped, setTapped] = useState(false);
   const [released, setReleased] = useState(false);
 
   const complete = revealedCount >= CARDS;
   const onCardRevealed = useCallback(() => setRevealedCount((n) => n + 1), []);
+  const onCardTap = useCallback(() => setTapped(true), []);
+
+  // The tapping hand shows once the cards are in view, and goes as soon as a guest starts tapping.
+  const cardsSeen = useInViewOnce(cardsRow);
+  const showHint = cardsSeen && !tapped && !complete;
 
   /* ---- scroll lock ------------------------------------------------------ */
 
-  // While locked, single-finger drags must not move the page (the scratch canvas has touch-action: none).
+  // While locked, single-finger drags must not move the page. Taps are unaffected.
   const blockTouchScroll = useRef((e: TouchEvent) => {
     if (e.touches.length < 2) e.preventDefault();
   });
@@ -110,7 +120,7 @@ export function SaveTheDate({
   }, []);
 
   // Where the gate should rest: the whole card, centred — or, on a screen too short to hold it
-  // (a phone on its side), just the scratch cards, so they are always fully in view.
+  // (a phone on its side), just the three cards, so they are always fully in view.
   const measure = useCallback(() => {
     const card = gate.current;
     const cards = cardsRow.current;
@@ -238,47 +248,45 @@ export function SaveTheDate({
             {instruction}
           </p>
 
-          {/* the three scratch cards — the heart of this page */}
+          {/* the three cards to tap — the heart of this page */}
           <div ref={cardsRow} className="relative mt-6 grid grid-cols-3 gap-2.5 sm:gap-4 md:mt-8 [@media(max-height:640px)]:mt-4">
             {(
               [
-                [labels.month, monthShort, 30],
-                [labels.day, date.day, 54],
-                [labels.year, date.year, 26],
+                [labels.month, monthShort, date.month, 30],
+                [labels.day, date.day, date.day, 54],
+                [labels.year, date.year, date.year, 26],
               ] as const
-            ).map(([label, text, size]) => (
+            ).map(([label, text, spoken, size]) => (
               <div key={label} data-std="card" className="[container-type:inline-size]">
-                <ScratchCard
+                <RevealCard
                   label={label}
+                  spoken={spoken}
+                  onTap={onCardTap}
                   onReveal={onCardRevealed}
-                  forceReveal={forceReveal}
+                  invite={showHint}
                   className="aspect-[3/4] rounded-[10px] shadow-soft"
                 >
                   <DateFace size={size}>{text}</DateFace>
-                </ScratchCard>
+                </RevealCard>
               </div>
             ))}
             <Celebration play={complete} originRef={cardsRow} />
           </div>
 
-          {/* keyboard / screen-reader way through the gate */}
-          {!complete && (
-            <button
-              type="button"
-              onClick={() => setForceReveal(true)}
-              className="type-meta sr-only focus-visible:not-sr-only focus-visible:mt-4 focus-visible:inline-block focus-visible:text-maroon-500"
-            >
-              Reveal the date
-            </button>
-          )}
-
           <div className="relative mt-8 md:mt-10 [@media(max-height:640px)]:mt-5">
-            {/* until the date is revealed, a quiet ornament holds this space */}
+            {/* until the date is revealed, this space holds the tap guidance — and, once a guest has begun, a quiet ornament */}
             <div
               aria-hidden
-              className={`pointer-events-none absolute inset-0 grid place-items-center text-gold-500 transition-opacity duration-1000 ${complete ? "opacity-0" : "opacity-60"}`}
+              className={`pointer-events-none absolute inset-0 grid place-items-center text-gold-500 transition-opacity duration-1000 ${complete || showHint ? "opacity-0" : "opacity-60"}`}
             >
               <Mandala className="w-20 md:w-24" />
+            </div>
+            <div
+              aria-hidden
+              className={`pointer-events-none absolute inset-0 flex flex-col items-center justify-start gap-2 pt-1 transition-opacity duration-700 ${showHint ? "opacity-100 delay-[900ms]" : "opacity-0"}`}
+            >
+              <TapHand direction="up" play={showHint} className="w-9 md:w-11" />
+              <p className="type-subheading text-[1.0625rem]! italic text-gold-700 md:text-[1.1875rem]!">{hint}</p>
             </div>
             <div data-std="countdown" aria-hidden={!complete} className={complete ? "" : "invisible"}>
               <p className="type-subheading text-maroon-500">{dateLine}</p>

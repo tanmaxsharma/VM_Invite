@@ -104,13 +104,13 @@ function EventCard({ date, time, title, venue, motif, calendar }: ScheduleCard) 
   const spray = { "--bloom": t.bloom[0], "--bloom-deep": t.bloom[1], "--leaf": t.dark ? "#a9ac85" : "#8b9870" };
 
   return (
-    <article data-sc="card" className="relative mx-auto w-full max-w-[22rem]" style={vars}>
+    <article data-sc="card" className="relative mx-auto h-full w-full max-w-[22rem]" style={vars}>
       <div
-        className="relative rounded-[1.4rem] p-2 shadow-card"
+        className="relative h-full rounded-[1.4rem] p-2 shadow-card"
         style={{ backgroundColor: t.dark ? "#f3e7cf" : "var(--color-parchment-50)", backgroundImage: "var(--texture-paper)" }}
       >
         <div
-          className="relative overflow-hidden rounded-[1rem] border px-5 pt-6 pb-8 text-center"
+          className="relative flex h-full flex-col justify-center overflow-hidden rounded-[1rem] border px-5 pt-6 pb-8 text-center"
           style={{ borderColor: t.line, background: wash(t) }}
         >
           <div aria-hidden className="pointer-events-none absolute inset-1.5 rounded-[0.8rem] border" style={{ borderColor: t.line, opacity: 0.6 }} />

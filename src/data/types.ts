@@ -38,8 +38,8 @@ export type Photo = {
 export type EventMotif = "haldi" | "sangeet" | "reception" | "barat" | "rituals" | "afterparty";
 
 /**
- * One celebration. The date and time printed on its card and its calendar entries are all
- * generated from `start` and `end`, so they cannot disagree.
+ * One celebration. The date and time printed on its card are generated from `start` and `end`.
+ * Its calendar entry uses the same times unless `calendar` says otherwise.
  */
 export type ScheduleEvent = {
   title: string;
@@ -53,6 +53,12 @@ export type ScheduleEvent = {
    * Leave it out when the event is open-ended ("onwards"): no end time is invented.
    */
   end?: string;
+  /**
+   * The times saved to a guest's calendar, when they differ from what the card prints.
+   * Same form as `start` / `end`; with no `end`, the calendar entry has a start only.
+   * Leave it out and the calendar uses `start` and `end`.
+   */
+  calendar?: { start: string; end?: string };
 };
 
 export type MapLocation = {
@@ -105,9 +111,11 @@ export type WeddingData = {
     grandmother: string;
   };
   saveTheDate: {
-    /** Under the heading, above the three scratch cards */
+    /** Under the heading, above the three cards */
     instruction: string;
-    /** Printed on the scratch surfaces */
+    /** Beside the tapping hand that appears under the cards, e.g. "Tap each card to reveal" */
+    hint: string;
+    /** Printed on the covers of the cards */
     labels: { month: string; day: string; year: string };
     /** Replaces the countdown once the day arrives */
     completeMessage: string;
