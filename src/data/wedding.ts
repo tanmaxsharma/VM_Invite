@@ -104,7 +104,7 @@ export const wedding = {
     heading: "RSVP",
     message: "Please inform us if you'd like to join us by clicking on the tab.",
     button: "RSVP",
-    contact: { whatsapp: "919406525259" },
+    contact: { whatsapp: "919770900400" },
   },
   closing: {
     heading: "With Love",
