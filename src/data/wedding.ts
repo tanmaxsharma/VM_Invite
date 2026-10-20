@@ -136,7 +136,7 @@ export const wedding = {
     title: "Vishesh & Mahak | Wedding Invitation",
     description:
       "With love and blessings, we invite you to celebrate the wedding of Vishesh Jain and Mahak Jain on 15 November 2026 in Jabalpur.",
-    siteUrl: "https://vm-invite-five.vercel.app",
+    siteUrl: "https://mahvieenrose.vercel.app",
     siteName: "Vishesh & Mahak",
     // A wide link-preview picture made from public/images/coupleimage.png (which is portrait and
     // would be cropped through the couple in a wide preview). The original is left untouched.
