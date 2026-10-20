@@ -142,7 +142,7 @@ export const wedding = {
     // would be cropped through the couple in a wide preview). The original is left untouched.
     image: {
       src: "/images/social/og-couple.jpg",
-      alt: "Vishesh and Mahak, with the MahVieEnRose monogram",
+      alt: "Wedding invitation of Vishesh and Mahak — their photograph with the MahVieEnRose monogram, 15 November 2026, Jabalpur",
       width: 1200,
       height: 630,
     },

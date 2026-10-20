@@ -10,9 +10,11 @@ import "@/styles/globals.css";
 
 const { meta } = wedding;
 
-const siteUrl = "https://mahvieenrose.vercel.app";
-const ogImageUrl =
-  "https://mahvieenrose.vercel.app/images/social/og-couple.jpg";
+// Every link-preview URL comes from one place, `meta.siteUrl` in src/data/wedding.ts, so the domain
+// can never drift between tags. (The first deployment pointed og:image at a retired domain that
+// returned 404, and WhatsApp fell back to the site icon.)
+const siteUrl = new URL("/", meta.siteUrl).href; // "https://mahvieenrose.vercel.app/"
+const ogImageUrl = new URL(meta.image.src, meta.siteUrl).href; // ".../images/social/og-couple.jpg"
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -36,8 +38,8 @@ export const metadata: Metadata = {
     images: [
       {
         url: ogImageUrl,
-        width: 1200,
-        height: 630,
+        width: meta.image.width,
+        height: meta.image.height,
         alt: meta.image.alt,
         type: "image/jpeg",
       },
