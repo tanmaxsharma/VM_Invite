@@ -2,7 +2,7 @@ import type { Person, WeddingData } from "@/data/types";
 import { eventDateLabel, eventTimeLabel, ordinalDate, weddingDateParts, zonedTime } from "@/lib/format";
 import { calendarAction } from "@/lib/calendar";
 import { InvitationExperience } from "./InvitationExperience";
-import { Blessings } from "./Blessings";
+import { Compliments } from "./Compliments";
 import { SaveTheDate } from "./SaveTheDate";
 import { Schedule } from "./Schedule";
 import { Locations } from "./Locations";
@@ -39,14 +39,17 @@ export function WeddingTemplate({ data }: { data: WeddingData }) {
   });
   const weddingTitle = `${fullCouple} ${main.eventName}`;
 
+  const { map } = data.locations;
   const calendar = calendarAction({
     label: main.label,
     subject: "the wedding",
     ...calendarIds(main.eventName, main.start),
     title: weddingTitle,
-    description: `Wedding celebration of ${coupleAnd}.`,
-    // the wedding venue shown on the map, not any one event's location
-    location: data.locations.map.name,
+    description: [`Wedding celebration of ${coupleAnd}.`, saveTheDate.followedBy && `${saveTheDate.followedBy}.`]
+      .filter(Boolean)
+      .join(" "),
+    // the wedding venue shown on the map, with its address — not any one event's location
+    location: [map.name, map.address].filter(Boolean).join(", "),
     start: main.start,
     end: main.end,
     timeZone,
@@ -77,27 +80,29 @@ export function WeddingTemplate({ data }: { data: WeddingData }) {
   // The message a guest sends to RSVP: written out for them, with blanks to fill in.
   const day = weddingDateParts(weddingDate, timeZone);
   const replyText = [
-    `Hello, I would like to RSVP for the wedding of ${coupleAnd} on ${day.day} ${day.month} ${day.year}. Please find my response below.`,
+    `Hello, I would like to RSVP for the wedding of ${coupleAnd} on ${day.day} ${day.month} ${day.year}.`,
     "Name:",
     "Number of guests attending:",
     "Events attending:",
-    "Dietary preferences (if any):",
-    "Thank you.",
-  ].join("\n");
+    "Thank you,",
+    data.rsvp.contact?.name,
+  ]
+    .filter(Boolean)
+    .join("\n");
 
+  // The invitation card: each first name, then its grandparents and parents.
   const people = couple.map((p) => ({
-    name: fullName(p),
-    lead: p.parents?.lead,
-    parents: p.parents?.names.join(" & "),
+    name: p.firstName,
+    lines: [p.grandparents, p.parents]
+      .filter((f) => f !== undefined)
+      .map((f) => ({ lead: f.lead, names: f.names.join(" & ") })),
   })) as [HeroPerson, HeroPerson];
 
   return (
     <main>
       <InvitationExperience
-        intro={data.hero.intro}
-        people={people}
+        hero={{ ...data.hero, people, fullNames: [fullName(couple[0]), fullName(couple[1])], place }}
         shortNames={firstNames}
-        place={place}
         logo={data.brand?.logo}
         musicSrc={data.music?.src}
       />
@@ -105,17 +110,17 @@ export function WeddingTemplate({ data }: { data: WeddingData }) {
       <SaveTheDate
         {...saveTheDate}
         couple={fullCouple}
-        date={weddingDateParts(weddingDate, timeZone)}
-        dateLine={dateLine}
+        date={day}
+        time={eventTimeLabel(main.start, undefined, timeZone)}
         target={zonedTime(weddingDate, timeZone)}
         calendar={calendar}
       />
 
-      {data.groom.parents && <Blessings {...data.family} parents={data.groom.parents} />}
-
       <Schedule heading={data.schedule.heading} intro={data.schedule.intro} events={events} />
 
       <Locations {...data.locations} />
+
+      <Compliments {...data.compliments} />
 
       <Rsvp {...data.rsvp} subject={`RSVP — ${coupleNames}`} replyText={replyText} />
 

@@ -19,11 +19,14 @@ import { TapHand } from "@/components/decorations/TapHand";
 import { useInViewOnce } from "@/lib/useInViewOnce";
 
 type SaveTheDateProps = {
-  /** e.g. "Vishesh Jain & Mehak Jain" */
+  /** e.g. "Vishesh Jain & Mahak Jain" */
   couple: string;
+  /** Printed above the countdown once revealed, as "Sunday | 15 | November 2026" */
   date: { weekday: string; day: string; month: string; year: string };
-  /** e.g. "15th November 2026" — shown above the countdown */
-  dateLine: string;
+  /** e.g. "7:00 PM onwards" */
+  time: string;
+  /** e.g. "Followed by Grand Celebrations & Dinner" */
+  followedBy?: string;
   /** UTC timestamp (ms) of the start of the wedding day in its time zone */
   target: number;
   instruction: string;
@@ -60,7 +63,8 @@ function DateFace({ children, size }: { children: string; size: number }) {
 export function SaveTheDate({
   couple,
   date,
-  dateLine,
+  time,
+  followedBy,
   target,
   instruction,
   hint,
@@ -289,8 +293,30 @@ export function SaveTheDate({
               <p className="type-subheading text-[1.0625rem]! italic text-gold-700 md:text-[1.1875rem]!">{hint}</p>
             </div>
             <div data-std="countdown" aria-hidden={!complete} className={complete ? "" : "invisible"}>
-              <p className="type-subheading text-maroon-500">{dateLine}</p>
-              <div className="mt-4">
+              {/* the invitation's date line — Sunday | 15 | November 2026 — with the day set large between hairlines */}
+              <p className="flex items-center justify-center gap-2.5 text-maroon-500 sm:gap-4">
+                <span className="sr-only">
+                  {date.weekday}, {date.day} {date.month} {date.year}
+                </span>
+                <span aria-hidden className="type-meta text-[0.6875rem]! tracking-[0.2em]! text-gold-700 sm:text-[0.75rem]! sm:tracking-[0.28em]!">
+                  {date.weekday}
+                </span>
+                <span aria-hidden className="h-7 w-px shrink-0 bg-gold-500/55 md:h-8" />
+                <span aria-hidden className="font-display text-[2.25rem] leading-none md:text-[2.75rem]">
+                  {date.day}
+                </span>
+                <span aria-hidden className="h-7 w-px shrink-0 bg-gold-500/55 md:h-8" />
+                <span aria-hidden className="type-meta text-[0.6875rem]! tracking-[0.2em]! text-gold-700 sm:text-[0.75rem]! sm:tracking-[0.28em]!">
+                  {date.month} {date.year}
+                </span>
+              </p>
+              <p className="type-meta mt-3 text-maroon-500">{time}</p>
+              {followedBy && (
+                <p className="font-display mt-1 text-[1.0625rem] text-balance italic text-ink-soft sm:text-[1.125rem] md:text-[1.25rem]">
+                  {followedBy}
+                </p>
+              )}
+              <div className="mt-5 [@media(max-height:640px)]:mt-3">
                 <Countdown target={target} completeMessage={completeMessage} />
               </div>
               <div className="mt-6 md:mt-7 [@media(max-height:640px)]:mt-4">

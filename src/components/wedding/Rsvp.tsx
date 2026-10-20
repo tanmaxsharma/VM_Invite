@@ -20,7 +20,7 @@ type RsvpProps = {
   /** Used in the subject line when replying by email */
   subject: string;
   url?: string;
-  contact?: { whatsapp?: string; email?: string };
+  contact?: { name?: string; whatsapp?: string; email?: string };
 };
 
 /** A form, the hosts' WhatsApp, their email — or, with none set, a WhatsApp chat the guest picks. */
@@ -64,7 +64,7 @@ export function Rsvp({ heading, message, button, replyText, subject, url, contac
       ref={root}
       id="rsvp"
       aria-labelledby="rsvp-heading"
-      className="relative overflow-x-clip px-gutter pb-section text-center"
+      className="relative overflow-x-clip px-gutter pt-[calc(var(--spacing-section)*0.8)] pb-section text-center"
     >
       <div className="mx-auto max-w-[26rem]">
         <EventArtwork data-r="art" motif="rituals" className="mx-auto w-28 md:w-32" style={artPalette} />
@@ -104,6 +104,23 @@ export function Rsvp({ heading, message, button, replyText, subject, url, contac
             <p data-r="button" className="font-display mt-4 text-[1.125rem] italic text-ink-soft">
               Opens WhatsApp, with your reply ready to send
             </p>
+          )}
+
+          {/* who the replies go to, and the same number for anyone who would rather call */}
+          {contact?.name && (
+            <div data-r="button" className="mt-8">
+              <OrnamentDivider className="mx-auto w-20 text-gold-500/80" />
+              <p className="font-display mt-4 text-[1.375rem] text-maroon-500 md:text-[1.5rem]">{contact.name}</p>
+              {contact.whatsapp && (
+                <a
+                  href={`tel:+${contact.whatsapp.replace(/\D/g, "")}`}
+                  aria-label={`Call ${contact.name} on ${contact.whatsapp}`}
+                  className="font-display mt-1 inline-flex min-h-11 items-center px-2 text-[1.125rem] tracking-[0.04em] text-gold-700 lining-nums underline decoration-gold-500/40 underline-offset-4 transition-colors duration-500 hover:text-maroon-500"
+                >
+                  {contact.whatsapp}
+                </a>
+              )}
+            </div>
           )}
         </div>
       </div>

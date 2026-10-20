@@ -3,8 +3,9 @@
  * Templates read from this shape; they never hard-code couple-specific content.
  */
 
+/** A couple named together, e.g. a person's parents or grandparents */
 export type Parents = {
-  /** e.g. "Son of" / "Daughter of" */
+  /** Printed before the names, e.g. "S/O" or "Grandson of" */
   lead: string;
   /** Shown joined with "&", in this order */
   names: [string, string];
@@ -13,6 +14,9 @@ export type Parents = {
 export type Person = {
   firstName: string;
   lastName?: string;
+  /** e.g. "Grandson of" Er. Shri … & Late Smt. … — printed under the name, above the parents */
+  grandparents?: Parents;
+  /** e.g. "S/O" Mrs. … & Dr. … */
   parents?: Parents;
 };
 
@@ -96,19 +100,27 @@ export type WeddingData = {
     /** Path under /public, e.g. "/audio/wedding.mp3" */
     src: string;
   };
+  /** The invitation card: the wording around the couple's names, with their families beneath each */
   hero: {
-    /** The short line above the couple's names */
-    intro: string;
+    /** Set first, in Devanagari, e.g. "॥ णमो अरिहंताणं ॥" */
+    mantra?: string;
+    /** The invitation lines above the first name, one per line */
+    intro: string[];
+    /** Between the two names, e.g. "With" */
+    connector: string;
+    /** The lines after the second name, one per line */
+    closing: string[];
   };
-  /** Traditional blessing hierarchy — the elders, then the son's parents */
-  family: {
+  /** The family's relatives who send their regards, printed as on the invitation card */
+  compliments: {
     heading: string;
-    /** Introduces the living grandfather, e.g. "Seeking the blessings of" */
-    blessingLead: string;
-    grandfather: string;
-    /** Introduces the grandmother who has passed, e.g. "and in loving memory of" */
-    memoryLead: string;
-    grandmother: string;
+    /** In the order printed */
+    entries: {
+      /** e.g. "Mrs. Shubhra & Mr. Shriprakash Jain" */
+      names: string;
+      /** Shown in brackets after the names, e.g. "Bua Ji & Fufa Ji" */
+      relation: string;
+    }[];
   };
   saveTheDate: {
     /** Under the heading, above the three cards */
@@ -121,14 +133,15 @@ export type WeddingData = {
     completeMessage: string;
     /** Shown once the gate opens */
     continueLabel: string;
+    /** Printed under the time once the date is revealed, e.g. "Followed by Grand Celebrations & Dinner" */
+    followedBy?: string;
     /**
      * The main "Add to Calendar" button under the countdown. It opens Google Calendar with the event
-     * filled in (and offers an .ics file for Apple and Outlook). The location is the wedding venue
-     * shown in `locations`.
+     * filled in. The location is the wedding venue shown in `locations`.
      */
     calendar: {
       label: string;
-      /** Local start in `timeZone`, "YYYY-MM-DDTHH:mm" */
+      /** Local start in `timeZone`, "YYYY-MM-DDTHH:mm". The revealed date prints it as "… onwards". */
       start: string;
       /** Local end, same form. Leave out if unknown; Google's link then isn't offered, only the .ics file. */
       end?: string;
@@ -156,7 +169,9 @@ export type WeddingData = {
     url?: string;
     /** Where the reply message is sent */
     contact?: {
-      /** International format without "+", e.g. "919876543210" */
+      /** Who replies go to, printed under the button, e.g. "The Jain Family" */
+      name?: string;
+      /** International format, printed as written; "+", spaces and dashes are dropped for the link */
       whatsapp?: string;
       email?: string;
     };
@@ -172,5 +187,10 @@ export type WeddingData = {
   meta: {
     title: string;
     description: string;
+    /** The live site's origin, e.g. "https://example.vercel.app" — makes link-preview URLs absolute */
+    siteUrl: string;
+    siteName: string;
+    /** The picture shown when the link is shared (WhatsApp, social). Path under /public. */
+    image: Artwork;
   };
 };

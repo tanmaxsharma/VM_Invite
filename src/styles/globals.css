@@ -44,6 +44,8 @@
   /* --- Typography ------------------------------------------------------- */
   --font-display: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
   --font-sans: var(--font-jost), "Jost", system-ui, sans-serif;
+  /* the mantra: a Devanagari face, with the system's Devanagari fonts behind it */
+  --font-mantra: var(--font-tiro-devanagari), "Noto Serif Devanagari", "Nirmala UI", "Mangal", serif;
 
   /* Fluid scale: 360px → 1440px viewports */
   --text-display: clamp(3.25rem, 2.1rem + 5.2vw, 7.5rem);

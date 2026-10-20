@@ -9,20 +9,29 @@ import { FloralSpray } from "@/components/decorations/FloralSpray";
 import { Toran } from "@/components/decorations/Toran";
 import { Mask } from "@/components/ui/Mask";
 
+/** One family line under a name, e.g. lead "S/O", names "Mrs. Sapna & Dr. Rajneet Jain" */
+export type HeroLine = { lead: string; names: string };
+
 export type HeroPerson = {
-  /** Full name */
+  /** The name as printed large, e.g. "Vishesh" */
   name: string;
-  /** e.g. "Son of" */
-  lead?: string;
-  /** e.g. "Smt. Sapna Jain & Dr. Rajneet Jain " */
-  parents?: string;
+  /** Grandparents, then parents */
+  lines: HeroLine[];
 };
 
 export type HeroProps = {
-  /** The short line above the names, e.g. "With the blessings of our families" */
-  intro: string;
+  /** Set first, in Devanagari */
+  mantra?: string;
+  /** The invitation lines above the first name */
+  intro: string[];
+  /** Between the two names, e.g. "With" */
+  connector: string;
+  /** The lines after the second name */
+  closing: string[];
   /** The couple, in display order */
   people: [HeroPerson, HeroPerson];
+  /** Full names, for the page heading read by screen readers */
+  fullNames: [string, string];
   /** City / location line; omitted when not provided */
   place?: string;
   /** Arms the entrance animation (after the invitation is opened); it plays as the cover scrolls into view. */
@@ -30,28 +39,32 @@ export type HeroProps = {
   inert?: boolean;
 };
 
-/** A name set large, with the parents quietly beneath it. */
-function Person({ name, lead, parents }: HeroPerson) {
+/** A name set large, with the family quietly beneath it. */
+function Person({ name, lines }: HeroPerson) {
   return (
     <div>
       <Mask>
-        <span data-h="name" aria-hidden className="type-names block">
+        <span data-h="name" className="type-names block">
           {name}
         </span>
       </Mask>
-      {parents && (
-        <p data-h="parents" className="mx-auto mt-2 max-w-[17rem] text-center md:mt-3 md:max-w-[26rem]">
-          {lead && <span className="type-meta block text-[0.6875rem]! text-gold-700">{lead}</span>}
-          <span className="mt-1.5 block font-display text-[1.0625rem] leading-[1.35] text-balance text-ink-soft italic md:text-[1.3125rem]">
-            {parents}
-          </span>
-        </p>
+      {lines.length > 0 && (
+        <div data-h="parents" className="mx-auto mt-3 max-w-[18.5rem] space-y-1.5 md:mt-4 md:max-w-[30rem] md:space-y-2">
+          {lines.map(({ lead, names }) => (
+            <p
+              key={lead}
+              className="font-display text-[1.0625rem] leading-[1.42] text-balance text-ink-soft italic md:text-[1.3125rem]"
+            >
+              <span className="text-gold-700">{lead}</span> {names}
+            </p>
+          ))}
+        </div>
       )}
     </div>
   );
 }
 
-export function Hero({ intro, people: [first, second], place, play, inert }: HeroProps) {
+export function Hero({ mantra, intro, connector, closing, people: [first, second], fullNames, place, play, inert }: HeroProps) {
   const root = useRef<HTMLElement>(null);
 
   useGsap(
@@ -70,6 +83,7 @@ export function Hero({ intro, people: [first, second], place, play, inert }: Her
         })
         .from("[data-h=mandala]", { autoAlpha: 0, scale: 0.92, duration: 3, ease: ease.gentleGsap }, 0)
         .fromTo("[data-h=arch]", { clipPath: "inset(100% 0% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 2.2, ease: "expo.inOut" }, 0.1)
+        .from("[data-h=mantra]", { autoAlpha: 0, y: 10, duration: 1.4 }, 0.35)
         .from("[data-h=families]", { autoAlpha: 0, y: 14, duration: 1.4 }, 0.5)
         .from("[data-h=name]", { yPercent: 110, duration: 1.8, stagger: 0.25 }, 0.7)
         .from("[data-h=parents]", { autoAlpha: 0, y: 10, duration: 1.3, stagger: 0.45 }, 1.5)
@@ -83,7 +97,14 @@ export function Hero({ intro, people: [first, second], place, play, inert }: Her
       // Soft parallax as the hero scrolls away: background slower, foreground faster.
       const scrollTrigger = { trigger: root.current, start: "top top", end: "bottom top", scrub: true };
       gsap.to("[data-h=mandala]", { yPercent: 16, ease: "none", scrollTrigger });
-      gsap.to("[data-h=content]", { y: -70, opacity: 0.2, ease: "none", scrollTrigger });
+      // The words only begin to fade once the whole card has been read — the card is taller than
+      // the screen, and its last lines must stay clear while a guest is still reading them.
+      gsap.to("[data-h=content]", {
+        y: -70,
+        opacity: 0.2,
+        ease: "none",
+        scrollTrigger: { ...scrollTrigger, start: "bottom 50%" },
+      });
       gsap.to("[data-h=sprig]", { yPercent: -30, ease: "none", scrollTrigger });
       gsap.to("[data-h=cue-fade]", {
         autoAlpha: 0,
@@ -130,8 +151,8 @@ export function Hero({ intro, people: [first, second], place, play, inert }: Her
       {/*
         The stage. The jharokha arch is drawn around the content, not beside it, so it can never fall
         short of what it frames. It keeps its usual height (84svh, at most 46rem) and grows only when
-        the content needs more. Its top padding is the clearance the blessing line needs under the
-        curve of the arch (the arch is narrowest there); the bottom padding keeps the ornament clear
+        the content needs more. Its top padding is the clearance the opening lines need under the
+        curve of the arch (the arch is narrowest there); the bottom padding keeps the last lines clear
         of the scroll cue (which reaches about 6rem on phones / 8rem from md up, measured from the
         section edge, less the 8svh section padding).
       */}
@@ -149,26 +170,45 @@ export function Hero({ intro, people: [first, second], place, play, inert }: Her
           </div>
         </div>
 
-        <div data-h="content" className="relative flex w-full flex-col items-center text-center">
-          {/* two short lines on phones, where the arch is narrow; one line from sm up */}
-          <p data-h="families" className="type-subheading max-w-[12rem] italic text-gold-700 text-balance sm:max-w-none">
-            {intro}
-          </p>
-
+        <div data-h="content" className="relative flex w-full flex-col items-center px-4 text-center sm:px-8">
           <h1 className="sr-only">
-            {first.name} and {second.name}
+            {fullNames[0]} and {fullNames[1]}
           </h1>
 
-          <div className="mt-7 text-maroon-500 md:mt-10">
+          {/* Devanagari has tall vowel signs above and below the line: generous line height, never clipped */}
+          {mantra && (
+            <p data-h="mantra" lang="hi" className="font-mantra text-[1.375rem] leading-[1.75] text-maroon-500 md:text-[1.75rem]">
+              {mantra}
+            </p>
+          )}
+
+          {/* narrower on phones: these lines sit high, where the curve of the arch is tightest */}
+          <div data-h="families" className="mt-3 max-w-[15.75rem] sm:max-w-[26rem] md:mt-4 md:max-w-[30rem]">
+            {intro.map((line) => (
+              <p key={line} className="font-display text-[1.0625rem] leading-[1.5] text-balance text-ink-soft italic md:text-[1.3125rem]">
+                {line}
+              </p>
+            ))}
+          </div>
+
+          <div className="mt-6 text-maroon-500 md:mt-9">
             <Person {...first} />
-            <span data-h="amp" aria-hidden className="type-heading my-1 block italic text-gold-500 md:my-2">
-              &amp;
+            <span data-h="amp" className="type-heading my-3 block italic text-gold-500 md:my-4">
+              {connector}
             </span>
             <Person {...second} />
           </div>
 
           <div data-h="divider" className="mt-7 md:mt-9">
             <OrnamentDivider className="w-44 text-gold-500 md:w-56" />
+          </div>
+
+          <div data-h="details" className="mt-5 max-w-[18.5rem] md:mt-6 md:max-w-[30rem]">
+            {closing.map((line) => (
+              <p key={line} className="font-display text-[1.125rem] leading-[1.5] text-balance text-maroon-500 italic md:text-[1.375rem]">
+                {line}
+              </p>
+            ))}
           </div>
 
           {place && (

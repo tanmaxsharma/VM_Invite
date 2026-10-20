@@ -4,7 +4,7 @@
  * presses Send themselves.
  *
  * `phone` is the number in international format; any "+", spaces or dashes are ignored, so
- * "+91 94065 25259" and "919770900400" are the same. With no number, WhatsApp lets the guest
+ * "+91-7024060333" and "917024060333" are the same. With no number, WhatsApp lets the guest
  * choose who to send to.
  */
 export function whatsappUrl(phone: string | undefined, text: string) {
