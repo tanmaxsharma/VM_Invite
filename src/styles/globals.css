@@ -17,8 +17,9 @@
   --color-parchment-300: #d9c49c;
 
   --color-gold-300: #d8c08a;
-  --color-gold-500: #b08d45;
-  --color-gold-700: #7f642c;
+  --color-gold-500: #b08d45; /* ornaments, borders, dividers — not for words on ivory (2.9:1) */
+  --color-gold-600: #937330; /* gold for large display words, e.g. "With" (≥ 3.5:1 on every ivory) */
+  --color-gold-700: #6b5320; /* gold for small labels and text (≥ 5.8:1 on every ivory) */
 
   --color-saffron-300: #eab47a;
   --color-saffron-500: #d4812f;
@@ -30,14 +31,18 @@
 
   --color-brown-300: #a88a70;
   --color-brown-500: #6f5140;
+  --color-brown-600: #5c453a;
   --color-brown-700: #4a3427;
   --color-brown-900: #2e2019;
 
-  /* Semantic aliases — prefer these in components */
+  /* Semantic aliases — prefer these in components.
+     Contrast on the palest-to-darkest ivory the text sits on (page, cards, the hero's gold light):
+     ink 12.6–14.7:1 · ink-strong 9.3–10.9:1 · ink-soft 7.1–8.3:1 */
   --color-canvas: var(--color-parchment-50);
   --color-surface: var(--color-parchment-100);
   --color-ink: var(--color-brown-900);
-  --color-ink-soft: var(--color-brown-500);
+  --color-ink-strong: var(--color-brown-700); /* family names and relationships */
+  --color-ink-soft: var(--color-brown-600); /* secondary text: invitation lines, captions */
   --color-accent: var(--color-maroon-500);
   --color-line: color-mix(in oklab, var(--color-gold-500) 45%, transparent);
 
@@ -58,12 +63,12 @@
   --text-subheading--line-height: 1.35;
   --text-body: clamp(1rem, 0.95rem + 0.2vw, 1.125rem);
   --text-body--line-height: 1.75;
-  --text-meta: 0.75rem;
+  --text-meta: 0.8125rem;
   --text-meta--line-height: 1.5;
   --text-button: 0.8125rem;
   --text-button--line-height: 1;
 
-  --tracking-meta: 0.28em;
+  --tracking-meta: 0.22em;
   --tracking-button: 0.2em;
 
   /* --- Spacing & layout ------------------------------------------------- */
@@ -202,7 +207,9 @@
     font-family: var(--font-sans);
     font-size: var(--text-body);
     line-height: var(--text-body--line-height);
-    font-weight: 300;
+    /* Regular, not Light: anything that doesn't set its own weight inherits this, and Cormorant
+       Light is a hairline at reading sizes */
+    font-weight: 400;
   }
 
   /* Parchment: soft warm light at the top, gentle edge vignette, paper grain. */
@@ -284,19 +291,20 @@ html {
   font-weight: 400;
 }
 
+/* Medium italic: Cormorant's regular italic is too fine for the lines guests actually read */
 @utility type-subheading {
   font-family: var(--font-display);
   font-size: var(--text-subheading);
   line-height: var(--text-subheading--line-height);
   font-style: italic;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 @utility type-body {
   font-family: var(--font-sans);
   font-size: var(--text-body);
   line-height: var(--text-body--line-height);
-  font-weight: 300;
+  font-weight: 400;
 }
 
 @utility type-meta {

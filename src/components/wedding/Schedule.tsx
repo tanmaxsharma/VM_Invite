@@ -43,22 +43,27 @@ type Theme = {
   bloom: [string, string];
 };
 
+/* The light cards' labels and venue lines use the site's text tokens, so they meet AA contrast on
+   their washed paper (labels 5.1–6.1:1, venue 6.2–7.5:1). */
+const GOLD_INK = "var(--color-gold-700)";
+const INK_SOFT = "var(--color-ink-soft)";
+
 /* One stationery suite, six cards: each keeps the frame and typography, and
    borrows its palette and motif from the celebration it announces. */
 const THEMES: Record<EventMotif, Theme> = {
   haldi: {
     paper: "#fbf1d8", washA: "#f2c55c", washB: "#e4913a",
-    title: "#97500f", meta: "#8a6a2a", text: "#6f5140", line: "rgb(176 141 69 / 0.55)",
+    title: "#97500f", meta: GOLD_INK, text: INK_SOFT, line: "rgb(176 141 69 / 0.55)",
     art: ["#f0a830", "#c8661c", "#b08d45"], flower: "marigold", bloom: ["#f2a93b", "#cf6a1d"],
   },
   sangeet: {
     paper: "#f4edf1", washA: "#b995b8", washB: "#6b4570",
-    title: "#54304f", meta: "#7f642c", text: "#5b4652", line: "rgb(176 141 69 / 0.5)",
+    title: "#54304f", meta: GOLD_INK, text: "#5b4652", line: "rgb(176 141 69 / 0.5)",
     art: ["#7b4f7a", "#4b2c4c", "#c9a45a"], flower: "rose", bloom: ["#c49bbf", "#7a4d78"],
   },
   reception: {
     paper: "#fbf4ea", washA: "#dca8ac", washB: "#b0636f",
-    title: "#83323f", meta: "#7f642c", text: "#6f5140", line: "rgb(176 141 69 / 0.55)",
+    title: "#83323f", meta: GOLD_INK, text: INK_SOFT, line: "rgb(176 141 69 / 0.55)",
     art: ["#b9727a", "#5e1d28", "#b08d45"], flower: "rose", bloom: ["#c98a90", "#83323f"],
   },
   barat: {
@@ -68,7 +73,7 @@ const THEMES: Record<EventMotif, Theme> = {
   },
   rituals: {
     paper: "#fdf6e8", washA: "#f4cf8f", washB: "#e59a55",
-    title: "#8a3b12", meta: "#7f642c", text: "#6f5140", line: "rgb(176 141 69 / 0.55)",
+    title: "#8a3b12", meta: GOLD_INK, text: INK_SOFT, line: "rgb(176 141 69 / 0.55)",
     art: ["#c27a3a", "#e8a33a", "#b08d45"], flower: "marigold", bloom: ["#f0b451", "#d4812f"],
   },
   afterparty: {

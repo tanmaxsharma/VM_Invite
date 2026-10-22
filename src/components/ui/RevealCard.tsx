@@ -71,10 +71,10 @@ function Cover({ label }: { label: string }) {
             <circle r="1.6" fill="currentColor" stroke="none" />
           </svg>
         </span>
-        <span className="type-meta text-[0.625rem]! tracking-[0.2em]! text-parchment-50 sm:text-[0.6875rem]! sm:tracking-[0.24em]!">
+        <span className="type-meta text-[0.75rem]! tracking-[0.14em]! text-parchment-50 sm:text-[0.8125rem]! sm:tracking-[0.2em]!">
           {label}
         </span>
-        <span className="type-meta text-[0.5625rem]! tracking-[0.3em]! text-gold-300 sm:text-[0.625rem]!">Tap</span>
+        <span className="type-meta text-[0.6875rem]! tracking-[0.22em]! text-gold-300 sm:text-[0.75rem]!">Tap</span>
       </span>
     </span>
   );

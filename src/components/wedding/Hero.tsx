@@ -53,7 +53,7 @@ function Person({ name, lines }: HeroPerson) {
           {lines.map(({ lead, names }) => (
             <p
               key={lead}
-              className="font-display text-[1.0625rem] leading-[1.42] text-balance text-ink-soft italic md:text-[1.3125rem]"
+              className="font-display text-[1.125rem] leading-[1.5] font-medium text-balance text-ink-strong italic md:text-[1.375rem]"
             >
               <span className="text-gold-700">{lead}</span> {names}
             </p>
@@ -97,11 +97,10 @@ export function Hero({ mantra, intro, connector, closing, people: [first, second
       // Soft parallax as the hero scrolls away: background slower, foreground faster.
       const scrollTrigger = { trigger: root.current, start: "top top", end: "bottom top", scrub: true };
       gsap.to("[data-h=mandala]", { yPercent: 16, ease: "none", scrollTrigger });
-      // The words only begin to fade once the whole card has been read — the card is taller than
-      // the screen, and its last lines must stay clear while a guest is still reading them.
+      // The words drift up gently once the whole card has been read. They never fade: on a phone
+      // the card is taller than the screen, and every line must stay at full strength to be read.
       gsap.to("[data-h=content]", {
         y: -70,
-        opacity: 0.2,
         ease: "none",
         scrollTrigger: { ...scrollTrigger, start: "bottom 50%" },
       });
@@ -170,7 +169,7 @@ export function Hero({ mantra, intro, connector, closing, people: [first, second
           </div>
         </div>
 
-        <div data-h="content" className="relative flex w-full flex-col items-center px-4 text-center sm:px-8">
+        <div data-h="content" className="relative flex w-full flex-col items-center px-5 text-center sm:px-8">
           <h1 className="sr-only">
             {fullNames[0]} and {fullNames[1]}
           </h1>
@@ -185,7 +184,7 @@ export function Hero({ mantra, intro, connector, closing, people: [first, second
           {/* narrower on phones: these lines sit high, where the curve of the arch is tightest */}
           <div data-h="families" className="mt-3 max-w-[15.75rem] sm:max-w-[26rem] md:mt-4 md:max-w-[30rem]">
             {intro.map((line) => (
-              <p key={line} className="font-display text-[1.0625rem] leading-[1.5] text-balance text-ink-soft italic md:text-[1.3125rem]">
+              <p key={line} className="font-display text-[1.125rem] leading-[1.55] font-medium text-balance text-ink-soft italic md:text-[1.375rem]">
                 {line}
               </p>
             ))}
@@ -193,7 +192,7 @@ export function Hero({ mantra, intro, connector, closing, people: [first, second
 
           <div className="mt-6 text-maroon-500 md:mt-9">
             <Person {...first} />
-            <span data-h="amp" className="type-heading my-3 block italic text-gold-500 md:my-4">
+            <span data-h="amp" className="type-heading my-3 block italic text-gold-600 md:my-4">
               {connector}
             </span>
             <Person {...second} />
@@ -205,7 +204,7 @@ export function Hero({ mantra, intro, connector, closing, people: [first, second
 
           <div data-h="details" className="mt-5 max-w-[18.5rem] md:mt-6 md:max-w-[30rem]">
             {closing.map((line) => (
-              <p key={line} className="font-display text-[1.125rem] leading-[1.5] text-balance text-maroon-500 italic md:text-[1.375rem]">
+              <p key={line} className="font-display text-[1.1875rem] leading-[1.5] font-medium text-balance text-maroon-500 italic md:text-[1.4375rem]">
                 {line}
               </p>
             ))}

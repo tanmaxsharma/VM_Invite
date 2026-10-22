@@ -46,8 +46,8 @@ export function Countdown({ target, completeMessage }: CountdownProps) {
     <dl className="mx-auto grid max-w-[22rem] grid-cols-4 md:max-w-[28rem]">
       {split(remaining ?? 0).map(([label, value], i) => (
         <div key={label} className={`flex flex-col-reverse items-center gap-2 ${i > 0 ? "border-l border-gold-500/35" : ""}`}>
-          {/* tracked a little tighter than other labels so "SECONDS" fits its column at 320px */}
-          <dt className="type-meta pl-[0.14em] text-[0.625rem]! tracking-[0.14em]! text-gold-700 md:text-[0.6875rem]! md:tracking-[0.2em]! md:pl-[0.2em]">{label}</dt>
+          {/* 12px labels, tracked tight so "SECONDS" still fits its column at 320px */}
+          <dt className="type-meta pl-[0.06em] text-[0.75rem]! tracking-[0.06em]! text-gold-700 md:pl-[0.14em] md:text-[0.8125rem]! md:tracking-[0.14em]!">{label}</dt>
           {/* clean lining figures — calm and readable, not a clock face */}
           <dd className="font-display text-[clamp(1.75rem,8vw,2.375rem)] leading-none font-medium text-maroon-500 lining-nums tabular-nums">
             {remaining === null ? "–" : i === 0 ? value : String(value).padStart(2, "0")}

@@ -239,7 +239,7 @@ export function SaveTheDate({
           <h2 id="std-heading" className="type-heading mt-3 text-[clamp(2.4rem,9vw,3.6rem)]! text-maroon-500">
             <Mask>
               <span data-std="heading" className="block">
-                Save <span className="italic text-gold-500">the</span> Date
+                Save <span className="italic text-gold-600">the</span> Date
               </span>
             </Mask>
           </h2>
@@ -290,7 +290,7 @@ export function SaveTheDate({
               className={`pointer-events-none absolute inset-0 flex flex-col items-center justify-start gap-2 pt-1 transition-opacity duration-700 ${showHint ? "opacity-100 delay-[900ms]" : "opacity-0"}`}
             >
               <TapHand direction="up" play={showHint} className="w-9 md:w-11" />
-              <p className="type-subheading text-[1.0625rem]! italic text-gold-700 md:text-[1.1875rem]!">{hint}</p>
+              <p className="type-subheading text-[1.125rem]! italic text-gold-700 md:text-[1.25rem]!">{hint}</p>
             </div>
             <div data-std="countdown" aria-hidden={!complete} className={complete ? "" : "invisible"}>
               {/* the invitation's date line — Sunday | 15 | November 2026 — with the day set large between hairlines */}
@@ -298,7 +298,7 @@ export function SaveTheDate({
                 <span className="sr-only">
                   {date.weekday}, {date.day} {date.month} {date.year}
                 </span>
-                <span aria-hidden className="type-meta text-[0.6875rem]! tracking-[0.2em]! text-gold-700 sm:text-[0.75rem]! sm:tracking-[0.28em]!">
+                <span aria-hidden className="type-meta text-[0.75rem]! tracking-[0.12em]! text-gold-700 sm:text-[0.8125rem]! sm:tracking-[0.2em]!">
                   {date.weekday}
                 </span>
                 <span aria-hidden className="h-7 w-px shrink-0 bg-gold-500/55 md:h-8" />
@@ -306,13 +306,13 @@ export function SaveTheDate({
                   {date.day}
                 </span>
                 <span aria-hidden className="h-7 w-px shrink-0 bg-gold-500/55 md:h-8" />
-                <span aria-hidden className="type-meta text-[0.6875rem]! tracking-[0.2em]! text-gold-700 sm:text-[0.75rem]! sm:tracking-[0.28em]!">
+                <span aria-hidden className="type-meta text-[0.75rem]! tracking-[0.12em]! text-gold-700 sm:text-[0.8125rem]! sm:tracking-[0.2em]!">
                   {date.month} {date.year}
                 </span>
               </p>
               <p className="type-meta mt-3 text-maroon-500">{time}</p>
               {followedBy && (
-                <p className="font-display mt-1 text-[1.0625rem] text-balance italic text-ink-soft sm:text-[1.125rem] md:text-[1.25rem]">
+                <p className="font-display mt-1 text-[1.125rem] font-medium text-balance italic text-ink-soft md:text-[1.25rem]">
                   {followedBy}
                 </p>
               )}

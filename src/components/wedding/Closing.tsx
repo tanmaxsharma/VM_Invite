@@ -83,7 +83,7 @@ export function Closing({ heading, names: [first, second], date, hashtag, photo,
                 {first}
               </span>
             </Mask>
-            <span data-c="amp" className="type-heading block italic text-gold-500">
+            <span data-c="amp" className="type-heading block italic text-gold-600">
               &amp;
             </span>
             <Mask>

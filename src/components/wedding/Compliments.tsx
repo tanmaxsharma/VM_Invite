@@ -95,10 +95,11 @@ export function Compliments({ heading, entries }: ComplimentsProps) {
             <li key={names} data-bl="line">
               {/* a small diamond between entries on phones, where they stack */}
               {i > 0 && <span aria-hidden className="mx-auto mb-9 block size-1.5 rotate-45 bg-gold-300/70 md:hidden" />}
-              <p className="font-display text-[clamp(1.375rem,5.6vw,1.75rem)] leading-[1.25] text-balance text-parchment-50">
+              {/* cream on maroon 8.7–11.7:1; the gold relation 5.2–7:1 — Medium so neither turns to hairlines */}
+              <p className="font-display text-[clamp(1.375rem,5.6vw,1.75rem)] leading-[1.3] font-medium text-balance text-parchment-50">
                 {names}
               </p>
-              <p className="font-display mt-2 text-[1.0625rem] italic text-gold-300 md:text-[1.1875rem]">({relation})</p>
+              <p className="font-display mt-2 text-[1.125rem] font-medium italic text-gold-300 md:text-[1.25rem]">({relation})</p>
             </li>
           ))}
         </ul>
