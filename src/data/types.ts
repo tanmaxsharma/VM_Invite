@@ -171,7 +171,7 @@ export type WeddingData = {
     contact?: {
       /** Who replies go to, printed under the button, e.g. "The Jain Family" */
       name?: string;
-      /** International format, printed as written; "+", spaces and dashes are dropped for the link */
+      /** International format, used for the WhatsApp link only (not printed); "+", spaces and dashes are dropped */
       whatsapp?: string;
       email?: string;
     };

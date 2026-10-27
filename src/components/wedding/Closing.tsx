@@ -28,8 +28,10 @@ export function Closing({ heading, names: [first, second], date, hashtag, photo,
 
   useGsap(() => {
     if (prefersReducedMotion()) return;
+    // Starts as the ornament comes into view, so the page below the RSVP is never left blank while
+    // the closing waits to appear.
     gsap
-      .timeline({ defaults: { ease: ease.cinematicGsap }, scrollTrigger: { trigger: root.current, start: "top 60%" } })
+      .timeline({ defaults: { ease: ease.cinematicGsap }, scrollTrigger: { trigger: root.current, start: "top 80%" } })
       .from("[data-c=mandala]", { autoAlpha: 0, scale: 0.94, duration: 2.6, ease: ease.gentleGsap }, 0)
       .from("[data-c=divider]", { autoAlpha: 0, duration: 1.2 }, 0.1)
       .from("[data-c=heading]", { autoAlpha: 0, y: 10, duration: 1.4 }, 0.2)
@@ -50,11 +52,14 @@ export function Closing({ heading, names: [first, second], date, hashtag, photo,
       .from("[data-c=logo]", { autoAlpha: 0, y: 8, duration: 1.6 }, 3.2);
   }, root);
 
+  /* No top padding: the RSVP above already ends with a full section space, so the two don't stack
+     (as with the map after the schedule). Only as tall as its content — not a full screen with the
+     page centred in it. */
   return (
     <section
       ref={root}
       aria-labelledby="closing-heading"
-      className="relative isolate flex min-h-svh items-center justify-center overflow-hidden px-gutter py-section"
+      className="relative isolate flex justify-center overflow-hidden px-gutter pb-section"
     >
       <div
         data-c="mandala"

@@ -106,20 +106,11 @@ export function Rsvp({ heading, message, button, replyText, subject, url, contac
             </p>
           )}
 
-          {/* who the replies go to, and the same number for anyone who would rather call */}
+          {/* who the replies go to */}
           {contact?.name && (
             <div data-r="button" className="mt-8">
               <OrnamentDivider className="mx-auto w-20 text-gold-500/80" />
               <p className="font-display mt-4 text-[1.375rem] font-medium text-maroon-500 md:text-[1.5rem]">{contact.name}</p>
-              {contact.whatsapp && (
-                <a
-                  href={`tel:+${contact.whatsapp.replace(/\D/g, "")}`}
-                  aria-label={`Call ${contact.name} on ${contact.whatsapp}`}
-                  className="font-display mt-1 inline-flex min-h-11 items-center px-2 text-[1.125rem] font-medium tracking-[0.04em] text-gold-700 lining-nums underline decoration-gold-500/40 underline-offset-4 transition-colors duration-500 hover:text-maroon-500"
-                >
-                  {contact.whatsapp}
-                </a>
-              )}
             </div>
           )}
         </div>

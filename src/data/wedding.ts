@@ -113,14 +113,14 @@ export const wedding = {
       directionsUrl: "https://www.google.com/maps?cid=17875776434541365863",
     },
   },
-  // RSVP opens WhatsApp with a ready-written reply to this number — the one place it is set. It is
-  // printed as written; the link uses its digits (917024060333). The guest reads the message, fills
-  // in the blanks and presses Send. To use a form instead, set `rsvp.url`.
+  // RSVP opens WhatsApp with a ready-written reply to this number — the one place it is set. The link
+  // uses its digits (917024060333); the number itself isn't printed on the page. The guest reads the
+  // message, fills in the blanks and presses Send. To use a form instead, set `rsvp.url`.
   rsvp: {
     heading: "RSVP",
     message: "Please inform us if you'd like to join us by clicking on the tab.",
     button: "RSVP",
-    contact: { name: "The Jain Family"},
+    contact: { name: "The Jain Family", whatsapp: "+917024060333" },
   },
   closing: {
     heading: "With Love",

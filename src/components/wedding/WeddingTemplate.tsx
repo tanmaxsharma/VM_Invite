@@ -1,5 +1,11 @@
 import type { Person, WeddingData } from "@/data/types";
-import { eventDateLabel, eventTimeLabel, ordinalDate, weddingDateParts, zonedTime } from "@/lib/format";
+import {
+  eventDateLabel,
+  eventTimeLabel,
+  ordinalDate,
+  weddingDateParts,
+  zonedTime,
+} from "@/lib/format";
 import { calendarAction } from "@/lib/calendar";
 import { InvitationExperience } from "./InvitationExperience";
 import { Compliments } from "./Compliments";
@@ -10,7 +16,8 @@ import { Rsvp } from "./Rsvp";
 import type { HeroPerson } from "./Hero";
 import { Closing } from "./Closing";
 
-const fullName = (p: Person) => [p.firstName, p.lastName].filter(Boolean).join(" ");
+const fullName = (p: Person) =>
+  [p.firstName, p.lastName].filter(Boolean).join(" ");
 
 /**
  * Composition root for this invitation template (Server Component).
@@ -20,9 +27,15 @@ const fullName = (p: Person) => [p.firstName, p.lastName].filter(Boolean).join("
 export function WeddingTemplate({ data }: { data: WeddingData }) {
   const { weddingDate, timeZone } = data;
   const couple: [Person, Person] =
-    data.nameOrder === "groom-first" ? [data.groom, data.bride] : [data.bride, data.groom];
-  const firstNames: [string, string] = [couple[0].firstName, couple[1].firstName];
-  const place = [data.city, data.region].filter(Boolean).join(", ") || undefined;
+    data.nameOrder === "groom-first"
+      ? [data.groom, data.bride]
+      : [data.bride, data.groom];
+  const firstNames: [string, string] = [
+    couple[0].firstName,
+    couple[1].firstName,
+  ];
+  const place =
+    [data.city, data.region].filter(Boolean).join(", ") || undefined;
   const dateLine = data.closing.date ?? ordinalDate(weddingDate, timeZone);
   const coupleNames = `${firstNames[0]} & ${firstNames[1]}`;
 
@@ -32,7 +45,11 @@ export function WeddingTemplate({ data }: { data: WeddingData }) {
   const { calendar: main, ...saveTheDate } = data.saveTheDate;
   const fullCouple = couple.map(fullName).join(" & ");
   const coupleAnd = couple.map(fullName).join(" and ");
-  const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const slug = (s: string) =>
+    s
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "");
   const calendarIds = (name: string, start: string) => ({
     uid: `${slug(name)}-${start.replace(/[-:]/g, "")}@vm-invite`,
     fileName: `${firstNames.map(slug).join("-")}-${slug(name)}`,
@@ -45,7 +62,10 @@ export function WeddingTemplate({ data }: { data: WeddingData }) {
     subject: "the wedding",
     ...calendarIds(main.eventName, main.start),
     title: weddingTitle,
-    description: [`Wedding celebration of ${coupleAnd}.`, saveTheDate.followedBy && `${saveTheDate.followedBy}.`]
+    description: [
+      `Wedding celebration of ${coupleAnd}.`,
+      saveTheDate.followedBy && `${saveTheDate.followedBy}.`,
+    ]
       .filter(Boolean)
       .join(" "),
     // the wedding venue shown on the map, with its address — not any one event's location
@@ -77,18 +97,19 @@ export function WeddingTemplate({ data }: { data: WeddingData }) {
     };
   });
 
-  // The message a guest sends to RSVP: written out for them, with blanks to fill in.
   const day = weddingDateParts(weddingDate, timeZone);
+
+  // The message a guest sends to RSVP: written out for them in plain text, with a blank line between
+  // paragraphs. They add their name and how many are coming, then press Send. Each label ends in a
+  // space, so what they type doesn't run into it.
   const replyText = [
-    `Hello, I would like to RSVP for the wedding of ${coupleAnd} on ${day.day} ${day.month} ${day.year}.`,
-    "Name:",
-    "Number of guests attending:",
-    "Events attending:",
-    "Thank you,",
-    data.rsvp.contact?.name,
-  ]
-    .filter(Boolean)
-    .join("\n");
+    "Congratulations to Vishesh & Mahak!",
+    "",
+    "We are delighted to join the wedding celebrations and extend our heartfelt wishes to the couple.",
+    "",
+    "With best wishes,",
+    "From: ",
+  ].join("\n");
 
   // The invitation card: each first name, then its grandparents and parents.
   const people = couple.map((p) => ({
@@ -101,7 +122,12 @@ export function WeddingTemplate({ data }: { data: WeddingData }) {
   return (
     <main>
       <InvitationExperience
-        hero={{ ...data.hero, people, fullNames: [fullName(couple[0]), fullName(couple[1])], place }}
+        hero={{
+          ...data.hero,
+          people,
+          fullNames: [fullName(couple[0]), fullName(couple[1])],
+          place,
+        }}
         shortNames={firstNames}
         logo={data.brand?.logo}
         musicSrc={data.music?.src}
@@ -116,13 +142,21 @@ export function WeddingTemplate({ data }: { data: WeddingData }) {
         calendar={calendar}
       />
 
-      <Schedule heading={data.schedule.heading} intro={data.schedule.intro} events={events} />
+      <Schedule
+        heading={data.schedule.heading}
+        intro={data.schedule.intro}
+        events={events}
+      />
 
       <Locations {...data.locations} />
 
       <Compliments {...data.compliments} />
 
-      <Rsvp {...data.rsvp} subject={`RSVP — ${coupleNames}`} replyText={replyText} />
+      <Rsvp
+        {...data.rsvp}
+        subject={`RSVP — ${coupleNames}`}
+        replyText={replyText}
+      />
 
       <Closing
         heading={data.closing.heading}
